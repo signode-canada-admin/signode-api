@@ -28,7 +28,7 @@ const via = new Schema(
 const tickectsSchema =     
 {
     "_id": { type: String },
-    "dateReceived": { type: String },
+    "dateReceived": { type: Date },
     "originalPrint": { type: Boolean },
     "emailAttachment": { type: String },
     "shipTo": { type: String },
