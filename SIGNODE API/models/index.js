@@ -24,25 +24,44 @@ const via = new Schema(
     }
 )
 
+
+const tickectsSchema =     
+{
+    "_id": { type: String },
+    "dateReceived": { type: String },
+    "originalPrint": { type: Boolean },
+    "emailAttachment": { type: String },
+    "shipTo": { type: String },
+    "via": { type: String },
+    "PO": { type: String },
+    "fileDirectory": { type: String },
+    "status": { type: String },
+    "shippedDate": { type: Date },
+    "invoicedDate": { type: Date },
+    "month": { type: String },
+    "easyName": { type: String },
+}
+
 const collectMar = new Schema(
-    {
-        "_id": { type: String },
-        "dateReceived": { type: Date },
-        "originalPrint": { type: Boolean },
-        "emailAttachment": { type: String },
-        "shipTo": { type: String },
-        "via": { type: String },
-        "PO": { type: String },
-        "fileDirectory": { type: String },
-        "status": { type: String },
-        "shippedDate": { type: Date },
-        "invoicedDate": { type: Date },
-        "month": { type: String },
-        "easyName": { type: String },
-    },
+    tickectsSchema,
     {
         collection: 'markham'
     }
+)
+
+const collectSurr = new Schema(
+    tickectsSchema, 
+    {
+        collection: 'surrey'
+    }
+)
+
+const collectGlen = new Schema(
+    tickectsSchema,
+    {
+        collection: 'glenview'
+    } 
+
 )
 
 
@@ -50,6 +69,8 @@ module.exports = {
     vars: mongoose.model('vars', vars),
     via: mongoose.model('via', via), 
     collectMar: mongoose.model('collectMar', collectMar),
+    collectSurr: mongoose.model('collectSurr', collectSurr),
+    collectGlen: mongoose.model('collectGlen', collectGlen),
 }
 
 

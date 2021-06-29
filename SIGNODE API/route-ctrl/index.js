@@ -1,4 +1,4 @@
-const { vars, via, collectMar } = require('../models');
+const { vars, via, collectMar, collectSurr, collectGlen } = require('../models');
 
 const getvars = async (req, res) => {
 
@@ -27,21 +27,68 @@ const getvia = async (req, res) => {
 
 }
 
-const getMar = async (req, res) => {
+const getTickets = async (req, res) => {
 
-    await collectMar.find({  }, (err, result)=> {
+    let site = req.params.site;
+
+    const response = (err, result)=> {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
 
         return res.status(200).json({ success: true, data: result })
-    })
+    }
 
+    if (site === 'mar'){
+
+        await collectMar.find({  }, response)
+
+    } else if (site === 'surr'){
+
+        await collectSurr.find({  }, response)
+
+    } else {
+
+        await collectGlen.find({  }, response)
+
+    }
+
+}
+
+const getOrder = async(req, res) => {
+
+    let site = req.params.site;
+    let id = req.params.id
+
+    const response = (err, result)=> {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: result })
+    }
+
+    if (site === 'mar'){
+
+        await collectMar.findOne({ _id: id }, response)
+
+    } else if (site === 'surr'){
+
+        await collectSurr.findOne({ _id: id }, response)
+
+    } else {
+
+        await collectGlen.findOne({ _id: id }, response)
+
+    }
+
+    
 }
 
 
 module.exports = {
     getvars,
     getvia,
-    getMar,
+    getTickets,
+    getOrder,
 };
