@@ -1,4 +1,4 @@
-const { vars, via, collectMar, collectSurr, collectGlen } = require('../models');
+const { vars, via, collectMar, collectSurr, collectGlen, siteNames } = require('../models');
 
 const getvars = async (req, res) => {
 
@@ -26,6 +26,19 @@ const getvia = async (req, res) => {
     })
 
 }
+
+const getSiteList = async (req, res) => {
+
+    const arg = 'sites'
+    await siteNames.findOne({ _id: `${ arg }` }, (err, result)=> {
+        if (err){
+            return res.status(400).json({ success: False, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: result })
+    })
+
+} 
 
 const getTickets = async (req, res) => {
 
@@ -89,6 +102,7 @@ const getOrder = async(req, res) => {
 module.exports = {
     getvars,
     getvia,
+    getSiteList,
     getTickets,
     getOrder,
 };

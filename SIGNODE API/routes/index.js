@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.get('/vars/:id', ctrl.getvars);
 router.get('/via', ctrl.getvia);
+router.get('/sites', ctrl.getSiteList);
 router.get('/tickets/:site', ctrl.getTickets);
 router.get('/tickets/:site/:id', ctrl.getOrder);
 

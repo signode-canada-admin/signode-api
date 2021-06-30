@@ -65,12 +65,24 @@ const collectGlen = new Schema(
 )
 
 
+const siteNames = new Schema(
+    {
+        _id: { type: String },
+        list: [{ type: String }], 
+    },
+    {
+        collection: "siteList",
+    }
+)
+
+
 module.exports = {
     vars: mongoose.model('vars', vars),
     via: mongoose.model('via', via), 
     collectMar: mongoose.model('collectMar', collectMar),
     collectSurr: mongoose.model('collectSurr', collectSurr),
     collectGlen: mongoose.model('collectGlen', collectGlen),
+    siteNames: mongoose.model('siteNames', siteNames),
 }
 
 
