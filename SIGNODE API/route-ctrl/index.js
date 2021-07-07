@@ -4,7 +4,6 @@ const getvars = async (req, res) => {
 
     await vars.findOne({ _id: req.params.id }, (err, result) => {
         if (err) {
-            console.log('PASS');
             return res.status(400).json({ success: false, error: err })
         }
 
@@ -52,15 +51,15 @@ const getTickets = async (req, res) => {
         return res.status(200).json({ success: true, data: result })
     }
 
-    if (site === 'mar'){
+    if (site === 'markham'){
 
         await collectMar.find({  }, response)
 
-    } else if (site === 'surr'){
+    } else if (site === 'surrey'){
 
         await collectSurr.find({  }, response)
 
-    } else {
+    } else if (site === 'glenview'){
 
         await collectGlen.find({  }, response)
 
@@ -81,15 +80,15 @@ const getOrder = async(req, res) => {
         return res.status(200).json({ success: true, data: result })
     }
 
-    if (site === 'mar'){
+    if (site === 'markham'){
 
         await collectMar.findOne({ _id: id }, response)
 
-    } else if (site === 'surr'){
+    } else if (site === 'surrey'){
 
         await collectSurr.findOne({ _id: id }, response)
 
-    } else {
+    } else if (site === 'glenview'){
 
         await collectGlen.findOne({ _id: id }, response)
 

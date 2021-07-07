@@ -13,7 +13,7 @@ db.on('error', console.error.bind(console, 'Mongo connection error'));
 
 //test
 app.get('/', (req, res)=>{
-    res.send("PASS");
+    res.send("SIGNODE API");    
 })
 
 app.use('/api', routes);
