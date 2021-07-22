@@ -63,6 +63,9 @@ const getTickets = async (req, res) => {
 
         await collectGlen.find({  }, response)
 
+    } else {
+
+        return res.status(400).json({ success: false, err: 'wrong site specified' })
     }
 
 }
@@ -92,8 +95,10 @@ const getOrder = async(req, res) => {
 
         await collectGlen.findOne({ _id: id }, response)
 
-    }
+    } else {
 
+        return res.status(400).json({ success: false, err: 'wrong site specified' })
+    }
     
 }
 

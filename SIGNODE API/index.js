@@ -11,12 +11,17 @@ app.use(cors())
 
 db.on('error', console.error.bind(console, 'Mongo connection error'));
 
-//test
-app.get('/', (req, res)=>{
-    res.send("SIGNODE API");    
+//api page
+const path = require('path')
+app.get('/api', (req, res)=>{
+    res.sendFile(path.join(__dirname + '/pages/index.html'));    
 })
 
 app.use('/api', routes);
+
+app.get('/*', (req, res)=>{
+    res.redirect('/api')
+})
 
 app.listen(apiport, (err)=>{
     console.log('api at port 4000');
