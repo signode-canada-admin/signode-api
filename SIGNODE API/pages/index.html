@@ -10,13 +10,26 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-        <h1>Signode API<h1>
-        <br>
+        <div>
+            <h1>Signode API</h1>
+            <h2>
+            <ol id="api-list">
+            </ol>
+            </h2>
+        </div>
+        
+    <script>
+        function fillList() {
+        document.getElementById("api-list").innerHTML = `
             <li><a href='http://localhost:4000/api/sites'>signode sites</a></li>
             <li><a href='http://localhost:4000/api/tickets/markham'>markham</a></li>
             <li><a href='http://localhost:4000/api/tickets/surrey'>surrey</a></li>
             <li><a href='http://localhost:4000/api/tickets/glenview'>glenview</a></li>
-            <li><a href='http://localhost:4000/api/testapi'>test api</a></li>
+        `
+        }
 
+        fillList()
+    </script>
     </body>
+
 </html>

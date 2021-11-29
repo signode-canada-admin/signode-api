@@ -3,21 +3,6 @@ const PDFDocument = require("pdfkit");
 const blobStream = require("blob-stream");
 require('dotenv').config();
 
-//
-//GLOBAL DB
-let db = {
-  "data": [],
-  "pdfs": [],
-  "urls" : []
-}
-
-const SITES = {
-  "pp": "Premium_plus",
-  "srap": "Srap",
-  "bi": "Bunzl_industrial"
-}
-//
-
 const {
   vars,
   via,
@@ -26,7 +11,6 @@ const {
   collectGlen,
   siteNames,
   partsQR,
-  ediMetaData,
 } = require("../models");
 
 const getvars = async (req, res) => {
@@ -254,16 +238,13 @@ const getSitePdfs = async (req, res) => {
   const spawn = require("child_process").spawn;
   let fileDir = ''
   if (site==='pp'){
-    siteName = SITES[site]
     fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
-  } else if (site === 'bi') {
-    siteName = SITES[site]
-    fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
+  } else if (site === 'bd') {
+    fileDir = `${process.env.BD_TABULA}/get_list_of_files.py`
   } else if (site==='srap') {
-    siteName = SITES[site]
-    fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
+    fileDir = `${process.env.SRAP_TABULA}/get_list_of_files.py`
   }
-  const pythonProcess = await spawn('python',[`${fileDir}`, `${siteName}`]);
+  const pythonProcess = await spawn('python',[`${fileDir}`]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
       const pdfList = JSON.parse(data)
@@ -282,24 +263,15 @@ const getEDIpageExtract = async (req, res) => {
   const spawn = require("child_process").spawn;
   
   // const file = `Y:\\Pick Ticket Project\\EDI\\Premium_plus\\PDFS_PREMIUM_PLUS\\${id}.pdf`
-  let pythonFile =  ``
-  let URL = ``
-  if (site==='pp'){
-    pythonFile = `${process.env.PP_TABULA}/data_extract.py`
-  } else if (site === 'bi') {
-    pythonFile = `${process.env.BI_TABULA}/data_extract.py`
-  } else if (site==='srap') {
-    pythonFile = `${process.env.SRAP_TABULA}/data_extract.py`
-  }
-
-  let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
+  let fileDir = fileDir = `${process.env.BASE_URL}/${site}/${id}`
+  let pythonFile = '';
   
   
-  const pythonProcess = spawn('python', [pythonFile, fileDir]);
+  const pythonProcess = spawn('python', [`${process.env.PP_TABULA}/premium_plus_data_extract.py`, fileDir]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
       const pdfData = JSON.parse(data)
-      return res.status(200).json({success: true, pdfData: pdfData})
+      return res.render('ediId', {title: id, file: `${id}.pdf`, pdfData})
   });
 }
 
@@ -322,11 +294,11 @@ const getEdipage = async (req, res) => {
       } else {
         fileDir = `${process.env.PP_URL}\\${id}.pdf`
       }
-    } else if (site==='bi') {
+    } else if (site==='gf') {
       if (archived==='true') {
-        fileDir = `${process.env.BI_ARCHIVED_URL}\\${id}.pdf`
+        fileDir = `${process.env.BD_ARCHIVED_URL}\\${id}.pdf`
       } else {
-        fileDir = `${process.env.BI_URL}\\${id}.pdf`
+        fileDir = `${process.env.BD_URL}\\${id}.pdf`
       }
     } else if (site==='srap') {
       if (archived === 'true') {
@@ -371,96 +343,6 @@ const getEdipage = async (req, res) => {
   await response('', id)
 
 };
-
-
-const ediMeta = async (req, res) => {
-  const site = req.params.site;
-  const response = (err, result) => {
-    if (err) {
-      return res.status(400).json({ success: false, error: err });
-    }
-
-    return res.status(200).json({ success: true, data: result });
-  };
-  ediMetaData.findOne({customer: site}, response)
-}
-
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
-const postEdiDetails = async (req, res) => {
-  let post_data = req.body;
-  const id = req.params.id;
-  let site = req.params.site;
-
-  const metaURL = `http://localhost:4000/api/edimetadata/${site}`
-  const fetch_meta = await fetch(metaURL)
-  const fetch_res = await fetch_meta.json()
-
-  // let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
-  let pythonFile = '';
-  const poMeta = fetch_res.data.data;
-  let excel_data = {"line_items": []}
-  excel_data.ship_via = post_data.ship_via
-  excel_data.po_no = post_data.po_no
-  excel_data.customer_name = poMeta.customer_name
-  excel_data.ship_to = poMeta.ship_to
-  excel_data.warehouse = poMeta.warehouse
-  excel_data.order_type = poMeta.order_type
-  excel_data._id = id
-
-
-  if (Array.isArray(post_data.prod_no)) {
-      post_data.prod_no.forEach((prod, i) => {
-          excel_data.num_line_items = post_data.prod_no.length
-          excel_data.line_items.push({"quantity": post_data.prod_qty[i], "product": prod})
-      })
-  } else {
-      excel_data.num_line_items = 1
-      excel_data.line_items.push({"quantity": post_data.prod_qty, "product": post_data.prod_no})
-  }
-
-  // add to db
-  site = SITES[site]
-  db.data.push(excel_data)
-  db.pdfs.push(`${id}*SEPARATOR*${site}`)
-  // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
-
-  res.redirect(`http://localhost:3000/edi/DONE?id=${site} ${id}`)
-}
-
-const ediDBMetaData = (req, res) => {
-  return res.status(200).json(db)
-}
-
-const createSX = async (req, res) => {
-  //access python file
-  const spawn = require("child_process").spawn;
-  const pythonProcess = spawn('python', [`${process.env.PP_TABULA}/premium_plus_excel_create_UPDATE.py`, JSON.stringify(db)]);
-  pythonProcess.stdout.on('data', (data) => {
-      data = data.toString().replace(/'/g, '"')
-      const pdfData = JSON.parse(data)
-      // console.log(pdfData)
-      // empty db
-      db = {"data": [], "pdfs": []}
-      res.status(200).json({"success": true})
-      // console.log("DONE")
-      // if (pdfData.success !== 'false') {
-      //   res.redirect("http://localhost:3000/edi")
-      // } else {
-      //   res.redirect(`http://localhost:3000/edi/DONE?id=DONE`)
-      // }
-  });
-
-  
-
-  //initiate function arguments
-
-  //process python
-
-  //empty the EDI GLOBAL DB
-
-  //return response
-}
 
 const postTest = async (req, res) => {
   if (!req.body._id) {
@@ -518,8 +400,4 @@ module.exports = {
   getSitePdfs,
   getEdipage,
   getEDIpageExtract,
-  postEdiDetails,
-  ediMeta,
-  createSX,
-  ediDBMetaData,
 };

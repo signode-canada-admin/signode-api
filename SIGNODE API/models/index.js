@@ -72,6 +72,21 @@ const siteNames = new Schema(
   }
 );
 
+const ediMetaData = new Schema(
+  {
+    _id: { type: String },
+    data: {
+        customer_name: {type: Number},
+        ship_to: {type: String},
+        warehouse: {type: String},
+        order_type: {type: String}
+    }
+  }, 
+  {
+    collection: "ediMetaData"
+  }
+)
+
 module.exports = {
   vars: mongoose.model("vars", vars),
   via: mongoose.model("via", via),
@@ -80,4 +95,5 @@ module.exports = {
   collectGlen: mongoose.model("collectGlen", collectGlen),
   siteNames: mongoose.model("siteNames", siteNames),
   partsQR: mongoose.model("partsQR", partsQRSchema),
+  ediMetaData: mongoose.model("ediMetaData", ediMetaData)
 };

@@ -24,6 +24,7 @@ app.get("/api", (req, res) => {
   res.sendFile(path.join(__dirname + "/pages/index.html"));
 });
 
+
 app.use("/api", routes);
 
 app.get("/*", (req, res) => {
