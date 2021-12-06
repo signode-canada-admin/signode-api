@@ -1,0 +1,19 @@
+[{
+  "_id": "premium_plus",
+  "data": {
+    "customer_name": 6183,
+    "ship_to": "00",
+    "warehouse": "A001",
+    "order_type": "QU"
+  },
+  "customer": "pp"
+},{
+  "_id": "srap",
+  "data": {
+    "customer_name": 2535,
+    "ship_to": "00",
+    "warehouse": "A001",
+    "order_type": "QU"
+  },
+  "customer": "srap"
+}]
