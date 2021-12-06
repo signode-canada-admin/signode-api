@@ -87,6 +87,22 @@ const ediMetaData = new Schema(
   }
 )
 
+
+const bunzlCrossRef = new Schema(
+  {
+    _id: {type: String},
+    customer: {type: Number},
+    name: {type: String},
+    sig_prod: {type: String},
+    desc: {type: String},
+    category: {type: String},
+    order_category: {type: String}
+  },
+  {
+    collection: "BunzlProductCrossReference"
+  }
+)
+
 module.exports = {
   vars: mongoose.model("vars", vars),
   via: mongoose.model("via", via),
@@ -95,5 +111,6 @@ module.exports = {
   collectGlen: mongoose.model("collectGlen", collectGlen),
   siteNames: mongoose.model("siteNames", siteNames),
   partsQR: mongoose.model("partsQR", partsQRSchema),
-  ediMetaData: mongoose.model("ediMetaData", ediMetaData)
+  ediMetaData: mongoose.model("ediMetaData", ediMetaData),
+  bunzlCrossRef: mongoose.model("bunzlCrossRef", bunzlCrossRef)
 };

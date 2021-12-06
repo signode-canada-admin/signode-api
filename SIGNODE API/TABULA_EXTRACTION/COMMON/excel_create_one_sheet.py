@@ -139,7 +139,7 @@ def print_multiple_POS(json_data):
         MIN_COL = 1
         MAX_COL = 18
 
-        sheet.title = data["_id"]
+        sheet.title = data["po_no"]
         sheet[cell_name["customer_name"]] = data["customer_name"]
         sheet[cell_name["ship_to"]] = data["ship_to"]
         sheet[cell_name["warehouse"]] = data["warehouse"]

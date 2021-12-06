@@ -27,6 +27,7 @@ const {
   siteNames,
   partsQR,
   ediMetaData,
+  bunzlCrossRef,
 } = require("../models");
 
 const getvars = async (req, res) => {
@@ -252,17 +253,18 @@ const getSearch = async (req, res) => {
 const getSitePdfs = async (req, res) => {
   let site = req.params.site
   const spawn = require("child_process").spawn;
-  let fileDir = ''
-  if (site==='pp'){
-    siteName = SITES[site]
-    fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
-  } else if (site === 'bi') {
-    siteName = SITES[site]
-    fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
-  } else if (site==='srap') {
-    siteName = SITES[site]
-    fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
-  }
+  const siteName = SITES[site]
+  const fileDir = process.env.COMMON_FILES_LIST
+  // if (site==='pp'){
+  //   siteName = SITES[site]
+  //   fileDir = process.env.COMMON_FILES_LIST
+  // } else if (site === 'bi') {
+  //   siteName = SITES[site]
+  //   fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
+  // } else if (site==='srap') {
+  //   siteName = SITES[site]
+  //   fileDir = `${process.env.PP_TABULA}/get_list_of_files.py`
+  // }
   const pythonProcess = await spawn('python',[`${fileDir}`, `${siteName}`]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
@@ -282,25 +284,50 @@ const getEDIpageExtract = async (req, res) => {
   const spawn = require("child_process").spawn;
   
   // const file = `Y:\\Pick Ticket Project\\EDI\\Premium_plus\\PDFS_PREMIUM_PLUS\\${id}.pdf`
+  let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
   let pythonFile =  ``
   let URL = ``
   if (site==='pp'){
-    pythonFile = `${process.env.PP_TABULA}/data_extract.py`
+    pythonFile = process.env.PP_TABULA
   } else if (site === 'bi') {
-    pythonFile = `${process.env.BI_TABULA}/data_extract.py`
+    pythonFile = process.env.BI_TABULA
   } else if (site==='srap') {
-    pythonFile = `${process.env.SRAP_TABULA}/data_extract.py`
+    pythonFile = process.env.SRAP_TABULA
   }
 
-  let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
+  function bi_extract (pythonFile, fileDir) {
+    const pythonProcess = spawn('python', [pythonFile, fileDir]);
+    pythonProcess.stdout.on('data', (data) => {
+        data = data.toString().replace(/'/g, '"')
+        const pdfData = JSON.parse(data)
+        return res.status(200).json({success: true, pdfData: pdfData})
+    });
+  }
+
+  function extract (pythonFile, fileDir) {
+    const pythonProcess = spawn('python', [pythonFile, fileDir]);
+    pythonProcess.stdout.on('data', (data) => {
+        data = data.toString().replace(/'/g, '"')
+        const pdfData = JSON.parse(data)
+        return res.status(200).json({success: true, pdfData: pdfData})
+    });
+  }
   
+
+  if (site!=='bi') {
+    extract(pythonFile, fileDir)
+  } else {
+    bi_extract(pythonFile, fileDir)
+  }
   
-  const pythonProcess = spawn('python', [pythonFile, fileDir]);
-  pythonProcess.stdout.on('data', (data) => {
-      data = data.toString().replace(/'/g, '"')
-      const pdfData = JSON.parse(data)
-      return res.status(200).json({success: true, pdfData: pdfData})
-  });
+  // const pythonProcess = spawn('python', [pythonFile, fileDir]);
+  // pythonProcess.stdout.on('data', (data) => {
+  //     data = data.toString().replace(/'/g, '"')
+  //     const pdfData = JSON.parse(data)
+  //     return res.status(200).json({success: true, pdfData: pdfData})
+  // });
+
+
 }
 
 const getEdipage = async (req, res) => {
@@ -392,7 +419,9 @@ const postEdiDetails = async (req, res) => {
   const id = req.params.id;
   let site = req.params.site;
 
-  const metaURL = `http://localhost:4000/api/edimetadata/${site}`
+  // const metaURL = `http://localhost:4000/api/edimetadata/${site}`
+  const metaURL = `${process.env.BASE_URL}/edimetadata/${site}`
+  // const metaURL = `http://localhost:4000/api/edimetadata/pp`
   const fetch_meta = await fetch(metaURL)
   const fetch_res = await fetch_meta.json()
 
@@ -425,7 +454,8 @@ const postEdiDetails = async (req, res) => {
   db.pdfs.push(`${id}*SEPARATOR*${site}`)
   // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
 
-  res.redirect(`http://localhost:3000/edi/DONE?id=${site} ${id}`)
+  res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
+  // res.redirect(`http://localhost:3000/edi/DONE?id=${site} ${id}`)
 }
 
 const ediDBMetaData = (req, res) => {
@@ -435,7 +465,7 @@ const ediDBMetaData = (req, res) => {
 const createSX = async (req, res) => {
   //access python file
   const spawn = require("child_process").spawn;
-  const pythonProcess = spawn('python', [`${process.env.PP_TABULA}/premium_plus_excel_create_UPDATE.py`, JSON.stringify(db)]);
+  const pythonProcess = spawn('python', [process.env.COMMON_ONE_SHEET, JSON.stringify(db)]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
       const pdfData = JSON.parse(data)
@@ -461,6 +491,19 @@ const createSX = async (req, res) => {
 
   //return response
 }
+
+const getbunzlCrossRef = async (req, res) => {
+  const query = req.query
+  
+  const response = (err, data) => {
+    if (err) {
+      res.status(400).json({success: false, error: err})
+    }
+    res.status(200).json({success: true, data: data})
+  }
+  await bunzlCrossRef.find(query, response)
+}
+
 
 const postTest = async (req, res) => {
   if (!req.body._id) {
@@ -522,4 +565,5 @@ module.exports = {
   ediMeta,
   createSX,
   ediDBMetaData,
+  getbunzlCrossRef,
 };

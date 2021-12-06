@@ -10,6 +10,7 @@ router.get("/tickets/:site", ctrl.getTickets);
 router.get("/tickets/:site/:status", ctrl.getStatus);
 router.get("/tickets/:site/:id", ctrl.getOrder);
 router.get("/tickets/:site/:id/page", ctrl.getPage);
+router.get("/edi/bunzlcrossref", ctrl.getbunzlCrossRef)
 router.get("/edi/:site/pdfs", ctrl.getSitePdfs)
 router.get("/edi/:site/:id", ctrl.getEdipage);
 router.get("/edi/:site/:id/extract", ctrl.getEDIpageExtract)
