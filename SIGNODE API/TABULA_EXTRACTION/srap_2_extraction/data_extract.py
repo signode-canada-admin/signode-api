@@ -1,9 +1,7 @@
-from re import S
 from tabula import read_pdf, read_pdf_with_template
 import os
 import glob
 import sys
-
 
 def list_of_files(path, file_ending='*.pdf'):
     '''
@@ -30,8 +28,6 @@ def move_files(src, dst):
         os.replace(src, dst)
     except:
         os.rename(src, dst)
-
-
 
 def srap_data_2(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
@@ -87,23 +83,22 @@ def srap_data_2(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         "num_line_items": len(line_items),
         "line_items" :line_items,
         "ship_to": ship_ad,
-        "x": x
     }
 
 
-#try:
-#    print(srap_data(rf"{sys.argv[1]}"))  
-#except Exception as e:
-#    ret = {
-#        "success": "false",
-#        "ship_via": "",
-#        "po_no": "",
-#        "num_line_items": 0,
-#        "line_items": [],
-#        "error": "Unexpected error occured"
-#    }
-#    print(ret)
+try:
+    print(srap_data_2(rf"{sys.argv[1]}"))  
+except Exception as e:
+    ret = {
+        "success": "false",
+        "ship_via": "",
+        "po_no": "",
+        "num_line_items": 0,
+        "line_items": [],
+        "error": "Unexpected error occured"
+    }
+    print(ret)
 
-print(srap_data_2(r"C:\Users\0235897\Documents\9889.pdf"))   
+#print(srap_data_2(r"C:\Users\0235897\Documents\9889.pdf"))   
 sys.stdout.flush()
 
