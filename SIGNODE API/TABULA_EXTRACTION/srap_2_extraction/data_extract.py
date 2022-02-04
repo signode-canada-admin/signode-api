@@ -55,7 +55,7 @@ def srap_data_2(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         
     ship_ad = address_text[8:(7+x)]
     ship_x = ship_ad[0].split(' ')
-    ship_ad[0]= ''.join(ship_x[2:])
+    ship_ad[0]= (' ').join(ship_x[2:])
 
     quantity_txt = quantity_text[(11+x):]
 
