@@ -32,10 +32,20 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         last_line = split_phrase[0]
         x += 1
         
-# Assign address to a variable and clean up the formatting
+# Seperate the "Sold to:" & "Ship to:" address
     ship_ad = address_text[8:(7+x)]
-    ship_x = ship_ad[0].split(' ')
-    ship_ad[0]= (' ').join(ship_x[2:])
+    ship_w = ship_ad[0].split('Canada')
+    ship_x = ship_ad[1].split('2')
+    ship_ad[0]= ship_w[1]
+    ship_ad[1]= ship_x[0]
+    
+    if x >= 4:
+        ship_y = ship_ad[2].split('M')
+        ship_ad[2]= ship_y[0]
+        
+        if x == 5:
+            ship_z = ship_ad[2].split('C')
+            ship_ad[3]= ship_z[0]
 
 #Take the values for quantity between three lines below the "Tool:" line 
 # and above the "Subtotal:" line 
@@ -82,7 +92,7 @@ except Exception as e:
     print(ret)
 
 #To Test on local document uncomment this line and change the file path:    
-#print(srap_data_inv(r"C:\Users\0235897\Documents\9889.pdf"))   
+print(srap_data_inv(r"C:\Users\0235897\Documents\9889.pdf"))   
 
 sys.stdout.flush()
 
