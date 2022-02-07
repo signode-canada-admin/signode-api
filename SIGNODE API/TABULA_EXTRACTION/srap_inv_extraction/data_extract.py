@@ -1,40 +1,17 @@
-from tabula import read_pdf, read_pdf_with_template
-import os
-import glob
+from tabula import read_pdf
 import sys
 
-def list_of_files(path, file_ending='*.pdf'):
-    '''
-    path = directory of files
-    file_ending = type of files (default = ".pdf")
-    '''
-    return glob.glob(os.path.join(path, file_ending))
-
-def enter_directory(path):
-    '''
-    path = directory to enter(must be r'str')
-    '''
-    try: 
-        os.chdir(path)
-    except OSError:       
-        print("Entering the directory %s failed" % path)
-
-def move_files(src, dst):
-    '''
-    src = path to file (.pdf)
-    dst = new path to file (.pdf)
-    '''
-    try:
-        os.replace(src, dst)
-    except:
-        os.rename(src, dst)
-
+#The most optimal area and #of pages to run tabula on
 def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
+# Running the tabula function to get the data from the pdf
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
-    
+
+#From the raw json_data file, isolate for only data portion
     rows_data = json_data[0]["data"]
     
+# Assign the entire column of data that contains the neded specfic data 
+# which will be later filtered down to only the specfic data 
     invoice_text = [row[2]["text"] for row in rows_data]
     invoice_no = invoice_text[2]
 
@@ -46,6 +23,8 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     item_num = item_num_txt[2:]
     line_items = []
 
+# Get the data for the address in between the 8th line 
+# and the line that starts with "Tool:" 
     last_line= 'test'
     x = 0
     while last_line != 'Tool:':
@@ -53,13 +32,15 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         last_line = split_phrase[0]
         x += 1
         
+# Assign address to a variable and clean up the formatting
     ship_ad = address_text[8:(7+x)]
     ship_x = ship_ad[0].split(' ')
     ship_ad[0]= (' ').join(ship_x[2:])
 
+#Take the values for quantity between three lines below the "Tool:" line 
+# and above the "Subtotal:" line 
     quantity_txt = quantity_text[(11+x):]
-
-
+    
     y = 0
     while last_line != 'Subtotal:':
         last_line = quantity_txt[(0+y)]
@@ -68,7 +49,7 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     quantity_full = quantity_txt[:(y-1)]
     quantity = [z[0] for z in quantity_full]
 
-
+# Pair the quanity and product number together within the list of "line items"
     for i in range(len(item_num)):
         item_num[i] = item_num[i].replace(",",".")
         line_items.append(
@@ -77,7 +58,8 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
                 "product" : item_num[i]
             }
         )
-
+# Return the Invoice number, total number of items, quanity 
+# and product numbers of each item, & the company name/address
     return {
         "invoice_no": invoice_no,
         "num_line_items": len(line_items),
@@ -85,7 +67,7 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         "ship_to": ship_ad,
     }
 
-
+# Error checking
 try:
     print(srap_data_inv(rf"{sys.argv[1]}"))  
 except Exception as e:
@@ -99,6 +81,8 @@ except Exception as e:
     }
     print(ret)
 
+#To Test on local document uncomment this line and change the file path:    
 #print(srap_data_inv(r"C:\Users\0235897\Documents\9889.pdf"))   
+
 sys.stdout.flush()
 
