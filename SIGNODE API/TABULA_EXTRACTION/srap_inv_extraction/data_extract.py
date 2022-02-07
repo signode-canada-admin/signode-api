@@ -29,7 +29,7 @@ def move_files(src, dst):
     except:
         os.rename(src, dst)
 
-def srap_data_2(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
+def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
     
@@ -87,7 +87,7 @@ def srap_data_2(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 
 
 try:
-    print(srap_data_2(rf"{sys.argv[1]}"))  
+    print(srap_data_inv(rf"{sys.argv[1]}"))  
 except Exception as e:
     ret = {
         "success": "false",
@@ -99,6 +99,6 @@ except Exception as e:
     }
     print(ret)
 
-#print(srap_data_2(r"C:\Users\0235897\Documents\9889.pdf"))   
+#print(srap_data_inv(r"C:\Users\0235897\Documents\9889.pdf"))   
 sys.stdout.flush()
 
