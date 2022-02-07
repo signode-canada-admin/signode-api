@@ -1,13 +1,13 @@
 from tabula import read_pdf
 import sys
 
-#The most optimal area and #of pages to run tabula on
+# The most optimal area and #of pages to run tabula on
 def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
 # Running the tabula function to get the data from the pdf
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
 
-#From the raw json_data file, isolate for only data portion
+# From the raw json_data file, isolate for only data portion
     rows_data = json_data[0]["data"]
     
 # Assign the entire column of data that contains the neded specfic data 
@@ -47,7 +47,7 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
             ship_z = ship_ad[2].split('C')
             ship_ad[3]= ship_z[0]
 
-#Take the values for quantity between three lines below the "Tool:" line 
+# Take the values for quantity between three lines below the "Tool:" line 
 # and above the "Subtotal:" line 
     quantity_txt = quantity_text[(11+x):]
     
@@ -91,7 +91,7 @@ except Exception as e:
     }
     print(ret)
 
-#To Test on local document uncomment this line and change the file path:    
+# To Test on local document uncomment this line and change the file path:    
 #print(srap_data_inv(r"C:\Users\0235897\Documents\9884.pdf"))   
 
 sys.stdout.flush()
