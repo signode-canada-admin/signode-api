@@ -34,7 +34,7 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         
 # Seperate the "Sold to:" & "Ship to:" address
     ship_ad = address_text[8:(7+x)]
-    ship_w = ship_ad[0].split('Canada')
+    ship_w = ship_ad[0].split('Canada ')
     ship_x = ship_ad[1].split('2')
     ship_ad[0]= ship_w[1]
     ship_ad[1]= ship_x[0]
