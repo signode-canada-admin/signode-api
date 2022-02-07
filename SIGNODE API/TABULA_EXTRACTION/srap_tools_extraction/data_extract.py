@@ -2,7 +2,7 @@ from tabula import read_pdf
 import sys
 
 # The most optimal area and #of pages to run tabula on
-def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
+def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
 # Running the tabula function to get the data from the pdf
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
@@ -79,7 +79,7 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 
 # Error checking
 try:
-    print(srap_data_inv(rf"{sys.argv[1]}"))  
+    print(srap_data_tools(rf"{sys.argv[1]}"))  
 except Exception as e:
     ret = {
         "success": "false",
@@ -92,7 +92,7 @@ except Exception as e:
     print(ret)
 
 # To Test on local document uncomment this line and change the file path:    
-#print(srap_data_inv(r"C:\Users\0235897\Documents\9884.pdf"))   
+#print(srap_data_tools(r"C:\Users\0235897\Documents\9884.pdf"))   
 
 sys.stdout.flush()
 
