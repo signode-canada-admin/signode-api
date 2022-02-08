@@ -43,7 +43,7 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         ship_y = ship_ad[2].split('Markham')
         ship_ad[2]= ship_y[0]
         
-        if x == 5:
+        if x >= 5:
             ship_z = ship_ad[2].split('Canada')
             ship_ad[3]= ship_z[0]
 
