@@ -35,16 +35,16 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 # Seperate the "Sold to:" & "Ship to:" address
     ship_ad = address_text[8:(7+x)]
     ship_w = ship_ad[0].split('Canada ')
-    ship_x = ship_ad[1].split('2')
+    ship_x = ship_ad[1].split('241')
     ship_ad[0]= ship_w[1]
     ship_ad[1]= ship_x[0]
     
     if x >= 4:
-        ship_y = ship_ad[2].split('M')
+        ship_y = ship_ad[2].split('Markham')
         ship_ad[2]= ship_y[0]
         
         if x == 5:
-            ship_z = ship_ad[2].split('C')
+            ship_z = ship_ad[2].split('Canada')
             ship_ad[3]= ship_z[0]
 
 # Take the values for quantity between three lines below the "Tool:" line 
@@ -92,7 +92,7 @@ except Exception as e:
     print(ret)
 
 # To Test on local document uncomment this line and change the file path:    
-#print(srap_data_tools(r"C:\Users\0235897\Documents\9884.pdf"))   
+#print(srap_data_tools(r"C:\Users\0235897\Documents\9889.pdf"))   
 
 sys.stdout.flush()
 
