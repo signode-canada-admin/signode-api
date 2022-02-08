@@ -95,4 +95,3 @@ except Exception as e:
 #print(srap_data_tools(r"C:\Users\0235897\Documents\9889.pdf"))   
 
 sys.stdout.flush()
-
