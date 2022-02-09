@@ -237,7 +237,7 @@ def arcelor_mittal_data_lattice(file, pages, quantity_leftover, area=(100.865625
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500738127.pdf"))
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500740015.pdf"))
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500741095.pdf"))
-print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500748660.pdf"))
+#print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500748660.pdf"))
 
 #problems below
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/Exceptions/PO-4500746034.pdf"))
