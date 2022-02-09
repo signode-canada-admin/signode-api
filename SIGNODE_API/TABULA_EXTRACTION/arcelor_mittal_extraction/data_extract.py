@@ -22,6 +22,7 @@ def read_loop(file):
     quantity_leftover = -1#if a item's quantity is on this page and its item number is on the next page, save that quantity number to this
     #if there isn't any leftover on first page, default value is -1
     line_item_list = [] #holds quantity and item number pair info
+    errors = [] #holds any error messages about what went wrong in code
 
     #for first pages, extract data using stream format. for all other pages, extract data using lattice format.
     #this is because stream consistently outputs a good format for first page, but all other pages have format messed up
@@ -41,10 +42,16 @@ def read_loop(file):
     json_data = read_pdf(file, pages=1, area=(52.906875, 5.328749999999999, 103.910625, 162.14625), stream=True, output_format="json")
     po = json_data[0]["data"][1][0]["text"]
 
+    #all pdfs ive found either have all item numbers be present + have #'s before their numbers, or NONE have #. 
+    #thus knowing which item number doesn't have a '#' seems irrelevant.
+    if len(line_item_list) == 0:
+        errors.append({"error": "# before prod. number not detected", "type": "product", "mssg": "# Not Found Error"})
+
     return{
         "po_no": po,
         "num_line_items": len(line_item_list),
         "line_items": line_item_list,
+        "errors": errors,
     }
 
 def arcelor_mittal_data_stream(file, pages, quantity_leftover, area=(1.903125, 0, 791.319375, 608.23875)):
@@ -230,6 +237,7 @@ def arcelor_mittal_data_lattice(file, pages, quantity_leftover, area=(100.865625
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500738127.pdf"))
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500740015.pdf"))
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500741095.pdf"))
-#print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500748660.pdf"))
+print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/New2/PO-4500748660.pdf"))
 
 #problems below
+#print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/Exceptions/PO-4500746034.pdf"))
