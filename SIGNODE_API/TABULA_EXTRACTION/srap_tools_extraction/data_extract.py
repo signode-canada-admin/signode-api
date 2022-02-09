@@ -1,13 +1,13 @@
 from tabula import read_pdf
 import sys
 
-#The most optimal area and #of pages to run tabula on
-def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
+# The most optimal area and #of pages to run tabula on
+def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
     
 # Running the tabula function to get the data from the pdf
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
 
-#From the raw json_data file, isolate for only data portion
+# From the raw json_data file, isolate for only data portion
     rows_data = json_data[0]["data"]
     
 # Assign the entire column of data that contains the neded specfic data 
@@ -32,12 +32,22 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         last_line = split_phrase[0]
         x += 1
         
-# Assign address to a variable and clean up the formatting
+# Seperate the "Sold to:" & "Ship to:" address
     ship_ad = address_text[8:(7+x)]
-    ship_x = ship_ad[0].split(' ')
-    ship_ad[0]= (' ').join(ship_x[2:])
+    ship_w = ship_ad[0].split('Canada ')
+    ship_x = ship_ad[1].split('241')
+    ship_ad[0]= ship_w[1]
+    ship_ad[1]= ship_x[0]
+    
+    if x >= 4:
+        ship_y = ship_ad[2].split('Markham')
+        ship_ad[2]= ship_y[0]
+        
+        if x >= 5:
+            ship_z = ship_ad[2].split('Canada')
+            ship_ad[3]= ship_z[0]
 
-#Take the values for quantity between three lines below the "Tool:" line 
+# Take the values for quantity between three lines below the "Tool:" line 
 # and above the "Subtotal:" line 
     quantity_txt = quantity_text[(11+x):]
     
@@ -69,20 +79,19 @@ def srap_data_inv(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 
 # Error checking
 try:
-    print(srap_data_inv(rf"{sys.argv[1]}"))  
+    print(srap_data_tools(rf"{sys.argv[1]}"))  
 except Exception as e:
     ret = {
         "success": "false",
-        "ship_via": "",
-        "po_no": "",
+        "ship_to": "",
+        "invoice_no": "",
         "num_line_items": 0,
         "line_items": [],
         "error": "Unexpected error occured"
     }
     print(ret)
 
-#To Test on local document uncomment this line and change the file path:    
-#print(srap_data_inv(r"C:\Users\0235897\Documents\9889.pdf"))   
+# To Test on local document uncomment this line and change the file path:    
+#print(srap_data_tools(r"C:\Users\0235897\Documents\9889.pdf"))   
 
 sys.stdout.flush()
-
