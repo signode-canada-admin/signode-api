@@ -83,8 +83,8 @@ try:
 except Exception as e:
     ret = {
         "success": "false",
-        "ship_via": "",
-        "po_no": "",
+        "ship_to": "",
+        "invoice_no": "",
         "num_line_items": 0,
         "line_items": [],
         "error": "Unexpected error occured"
