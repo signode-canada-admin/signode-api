@@ -201,36 +201,36 @@ except Exception as e:
     })
 sys.stdout.flush()
 
-
-# premium_plus_process({"data": [{'ship_via': 'PUROLATOR',
-#  'po_no': '411369',
-#     "customer_name": 6183,
-#     "ship_to": "00",
-#     "warehouse": "A001",
-#     "order_type": "QU",
-#  'num_line_items': 7,
-#  'line_items': [{'quantity': 1, 'product': '428756'},
-#   {'quantity': 3, 'product': '428789'},
-#   {'quantity': 7, 'product': '428811'},
-#   {'quantity': 4, 'product': '428873'},
-#   {'quantity': 1, 'product': '428895'},
-#   {'quantity': 2, 'product': '428909'},
-#   {'quantity': 1, 'product': '428920'}]}, 
-#                               {
-#     "ship_via": "UPS",
-#     "po_no": "412749",
-#     "customer_name": 2535,
-# "ship_to": "00",
-# "warehouse": "A001",
-# "order_type": "QU",
-#     "num_line_items": 1,
-#     "line_items": [
-#       {
-#         "quantity": 4,
-#         "product": "2187.004"
-#       }
-#     ]
-#   }], 
-#   "pdfs": ["412749*SEPARATOR*Premium_plus",
-# "Commande Signode-SRAP YL-813*SEPARATOR*Srap"]})
-
+'''
+premium_plus_process({"data": [{'ship_via': 'PUROLATOR',
+  'po_no': '411369',
+     "customer_name": 6183,
+     "ship_to": "00",
+     "warehouse": "A001",
+     "order_type": "QU",
+  'num_line_items': 7,
+  'line_items': [{'quantity': 1, 'product': '428756'},
+   {'quantity': 3, 'product': '428789'},
+   {'quantity': 7, 'product': '428811'},
+   {'quantity': 4, 'product': '428873'},
+   {'quantity': 1, 'product': '428895'},
+   {'quantity': 2, 'product': '428909'},
+   {'quantity': 1, 'product': '428920'}]}, 
+                               {
+     "ship_via": "UPS",
+     "po_no": "412749",
+     "customer_name": 2535,
+ "ship_to": "00",
+ "warehouse": "A001",
+ "order_type": "QU",
+     "num_line_items": 1,
+     "line_items": [
+       {
+         "quantity": 4,
+         "product": "2187.004"
+       }
+     ]
+   }], 
+   "pdfs": ["412749*SEPARATOR*Premium_plus",
+ "Commande Signode-SRAP YL-813*SEPARATOR*Srap"]})
+'''
