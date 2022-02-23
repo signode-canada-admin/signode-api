@@ -295,6 +295,8 @@ const getEDIpageExtract = async (req, res) => {
     pythonFile = process.env.SRAP_TABULA
   } else if (site==='am') {
     pythonFile = process.env.AM_TABULA
+  } else if (site==='srap_tr') {
+    pythonFile = process.env.SRAP_TR_TABULA
   }
 
   function bi_extract (pythonFile, fileDir) {
@@ -362,6 +364,12 @@ const getEdipage = async (req, res) => {
         fileDir = `${process.env.SRAP_ARCHIVED_URL}\\${id}.pdf`
       } else {
         fileDir = `${process.env.SRAP_URL}\\${id}.pdf`
+      }
+    } else if (site==='srap_tr'){
+      if (archived === 'true'){
+        fileDir = `${process.env.SRAP_TR_ARCHIVED_URL}\\${id}.pdf`
+      } else {
+        fileDir = `${process.env.SRAP_TR_URL}\\${id}.pdf`
       }
     }
 
