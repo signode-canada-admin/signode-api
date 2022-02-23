@@ -371,6 +371,12 @@ const getEdipage = async (req, res) => {
       } else {
         fileDir = `${process.env.SRAP_TR_URL}\\${id}.pdf`
       }
+    } else if (site==='am'){
+      if (archived === 'true'){
+        fileDir = `${process.env.AM_ARCHIVED_URL}\\${id}.pdf`
+      } else {
+        fileDir = `${process.env.AM_URL}\\${id}.pdf`
+      }
     }
 
     fs.stat(fileDir, function (err, stat) {
