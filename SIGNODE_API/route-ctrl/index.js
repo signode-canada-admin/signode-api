@@ -14,7 +14,8 @@ let db = {
 const SITES = {
   "pp": "Premium_plus",
   "srap": "Srap",
-  "bi": "Bunzl_industrial"
+  "bi": "Bunzl_industrial",
+  "str": "Srap_Tool_Repair",
 }
 //
 
@@ -295,8 +296,8 @@ const getEDIpageExtract = async (req, res) => {
     pythonFile = process.env.SRAP_TABULA
   } else if (site==='am') {
     pythonFile = process.env.AM_TABULA
-  } else if (site==='srap_tr') {
-    pythonFile = process.env.SRAP_TR_TABULA
+  } else if (site==='str') {
+    pythonFile = process.env.SRAP_TOOL_REPAIR_TABULA
   }
 
   function bi_extract (pythonFile, fileDir) {
@@ -365,11 +366,11 @@ const getEdipage = async (req, res) => {
       } else {
         fileDir = `${process.env.SRAP_URL}\\${id}.pdf`
       }
-    } else if (site==='srap_tr'){
+    } else if (site==='str'){
       if (archived === 'true'){
-        fileDir = `${process.env.SRAP_TR_ARCHIVED_URL}\\${id}.pdf`
+        fileDir = `${process.env.SRAP_TOOL_REPAIR_ARCHIVED_URL}\\${id}.pdf`
       } else {
-        fileDir = `${process.env.SRAP_TR_URL}\\${id}.pdf`
+        fileDir = `${process.env.SRAP_TOOL_REPAIR_URL}\\${id}.pdf`
       }
     } else if (site==='am'){
       if (archived === 'true'){

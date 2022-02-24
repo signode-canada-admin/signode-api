@@ -71,10 +71,11 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 # Return the Invoice number, total number of items, quanity 
 # and product numbers of each item, & the company name/address
     return {
-        "invoice_no": invoice_no,
+        "po_no": invoice_no,
         "num_line_items": len(line_items),
         "line_items" :line_items,
         "ship_to": ship_ad,
+        "ship_via": "TBD",
     }
 
 # Error checking
@@ -84,7 +85,7 @@ except Exception as e:
     ret = {
         "success": "false",
         "ship_to": "",
-        "invoice_no": "",
+        "po_no": "",
         "num_line_items": 0,
         "line_items": [],
         "error": "Unexpected error occured"
