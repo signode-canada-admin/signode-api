@@ -17,6 +17,7 @@ const SITES = {
   "srap": "Srap",
   "bi": "Bunzl_industrial",
   "str": "Srap_Tool_Repair",
+  "am": "Arcelor_Mittal",
 }
 //
 
