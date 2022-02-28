@@ -511,7 +511,6 @@ const ediMeta = async (req, res) => {
 
 const postEdiDetails = async (req, res) => {
   let post_data = req.body;
-  console.log(post_data)
   const id = req.params.id;
   let site = req.params.site;
 
@@ -528,7 +527,7 @@ const postEdiDetails = async (req, res) => {
   excel_data.ship_via = post_data.ship_via
   excel_data.po_no = post_data.po_no
   excel_data.customer_name = poMeta.customer_name
-  excel_data.ship_to = poMeta.ship_to
+  excel_data.ship_to = post_data.ship_to
   excel_data.warehouse = poMeta.warehouse
   excel_data.order_type = poMeta.order_type
   excel_data._id = id
@@ -548,9 +547,13 @@ const postEdiDetails = async (req, res) => {
   site = SITES[site]
   db.data.push(excel_data)
   db.pdfs.push(`${id}*SEPARATOR*${site}`)
-  // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
 
-  res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
+  console.log(site)
+  // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
+  if(req.params.site !== "bi"){
+    res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
+  }
+  
   // res.redirect(`http://localhost:3000/edi/DONE?id=${site} ${id}`)
 }
 

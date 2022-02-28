@@ -105,7 +105,8 @@ def return_PP_dict(data=None, via_data=None):
         "ship_via": via_data,
         "po_no": po_no,
         "num_line_items": len(line_items),
-        "line_items": line_items
+        "line_items": line_items,
+        "ship_to": "00",
     }
 
 
@@ -118,6 +119,7 @@ except Exception as e:
     ret = {
         "success": "false",
         "ship_via": "",
+        "ship_to": "",
         "po_no": "",
         "num_line_items": 0,
         "line_items": [],
