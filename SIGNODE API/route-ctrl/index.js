@@ -361,6 +361,7 @@ const getEDIpageExtract = async (req, res) => {
   let id = req.params.id;
 
   const spawn = require("child_process").spawn;
+  console.log(site)
   
   // const file = `Y:\\Pick Ticket Project\\EDI\\Premium_plus\\PDFS_PREMIUM_PLUS\\${id}.pdf`
   let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
