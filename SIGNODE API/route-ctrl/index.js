@@ -293,6 +293,8 @@ const getEDIpageExtract = async (req, res) => {
     pythonFile = process.env.BI_TABULA
   } else if (site==='srap') {
     pythonFile = process.env.SRAP_TABULA
+  } else if (site == '' ) {
+    return 0
   }
 
   function bi_extract (pythonFile, fileDir) {

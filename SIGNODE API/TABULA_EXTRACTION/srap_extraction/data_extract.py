@@ -32,7 +32,7 @@ def move_files(src, dst):
 
 
 
-def srap_data(file, area=(119.7225, 13.3875, 733.2525, 495.3375) , pages=1):
+def srap_data(file, area=(119.7225, 13.3875, 733.2525, 495.3375) , pages=1, arg = None):
     '''
     file: source file (type: .pdf)
     pages: 1, 2, .. 1-2,   "all"
@@ -43,6 +43,7 @@ def srap_data(file, area=(119.7225, 13.3875, 733.2525, 495.3375) , pages=1):
     '''
     
     json_data = read_pdf(file, pages=f"{pages}", area=area, lattice=True, output_format="json")
+
     
     cnt = 0
     rows_data = json_data[cnt]["data"]
@@ -90,6 +91,6 @@ except Exception as e:
     }
     print(ret)
 
-# print(srap_data("http://localhost:4000/api/edi/srap/Commande%20Signode-SRAP%20YL-807"))   
+# print(srap_data("http://localhost:4000/api/edi/srap/Commande%20Signode-SRAP%20YL-809", pages=1))   
 sys.stdout.flush()
 
