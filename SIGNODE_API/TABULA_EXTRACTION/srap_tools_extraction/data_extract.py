@@ -75,7 +75,7 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
         "num_line_items": len(line_items),
         "line_items" :line_items,
         "ship_to": ship_ad,
-        "ship_via": "TBD",
+        "ship_via": "ENTER SHIP VIA HERE",
     }
 
 # Error checking

@@ -388,7 +388,7 @@ const getEdipage = async (req, res) => {
         res.setHeader(
           "Content-disposition",
           'inline; filename="' + fileName + '"'
-        );
+        );  
         res.setHeader("Content-type", "application/pdf");
 
         stream.pipe(res);
