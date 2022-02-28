@@ -199,6 +199,9 @@ def return_GF_dict(data=None, ship_via=None, po_no=None):
 #     data = get_only_line_items(data)
 
     line_items = []
+    consumables = []
+    other = []
+    parts = []
     errors = []
     for row in data:
         try:
@@ -219,12 +222,45 @@ def return_GF_dict(data=None, ship_via=None, po_no=None):
             sig_prod = row[0][1].split()[0]
             category = "NOT FOUND"
             
-            
+        if category == "NOT FOUND":
+            err_found = "true"
+        else:
+            err_found = "false"
+
+
+        if (category == "consumables"):
+            consumables.append({
+            "quantity": qty,
+            "product": sig_prod,
+            "order_category": category,
+            "page": row[0][-1],
+            "error": err_found
+        })
+
+        elif (category == "parts"):
+            parts.append({
+            "quantity": qty,
+            "product": sig_prod,
+            "order_category": category,
+            "page": row[0][-1],
+            "error": err_found
+        })
+
+        else:
+            other.append({
+            "quantity": qty,
+            "product": sig_prod,
+            "order_category": category,
+            "page": row[0][-1],
+            "error": err_found
+        })
+
         line_items.append({
             "quantity": qty,
             "product": sig_prod,
             "order_category": category,
-            "page": row[0][-1]
+            "page": row[0][-1],
+            "error": err_found
         })
         
     
@@ -233,10 +269,13 @@ def return_GF_dict(data=None, ship_via=None, po_no=None):
         "line_items": line_items,
         "errors": errors,
         "ship_via": ship_via,
-        "po_no": po_no
+        "po_no": po_no,
+        "consumables": consumables,
+        "parts": parts,
+        "other": other
     }
 
-
+  
 # def bunzul_industrial_extraction_algo(file):
 #     return return_GF_dict(GF_data(file), GENERAL_data(file, area=(226.0575, 124.69500000000001, 277.3125, 279.99))[-1], GENERAL_data(file, area=(61.5825, 469.96498443603514, 101.3625, 611.4899844360351))[0].split('#')[1])
 def bunzul_industrial_extraction_algo(file):

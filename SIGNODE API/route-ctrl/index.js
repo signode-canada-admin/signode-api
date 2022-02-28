@@ -2,6 +2,7 @@ const fs = require("file-system");
 const PDFDocument = require("pdfkit");
 const blobStream = require("blob-stream");
 require('dotenv').config();
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 //
 //GLOBAL DB
@@ -62,13 +63,15 @@ const getSiteList = async (req, res) => {
     if (err) {
       return res.status(400).json({ success: False, error: err });
     }
-
+  
     return res.status(200).json({ success: true, data: result });
   });
 };
 
+
 const getTickets = async (req, res) => {
-  let site = req.params.site;
+  const site = req.params.site;
+  const siteQuery = req.query.query;
 
   const response = (err, result) => {
     if (err) {
@@ -78,17 +81,32 @@ const getTickets = async (req, res) => {
     return res.status(200).json({ success: true, data: result });
   };
 
-  if (site === "markham") {
-    await collectMar.find({}, response);
-  } else if (site === "surrey") {
-    await collectSurr.find({}, response);
-  } else if (site === "glenview") {
-    await collectGlen.find({}, response);
+  if (siteQuery === "length") {
+    if (site === "markham") {
+      await collectMar.find({}, response).countDocuments();
+    } else if (site === "surrey") {
+      await collectSurr.find({}, response).countDocuments();
+    } else if (site === "glenview") {
+      await collectGlen.find({}, response).countDocuments();
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, err: "wrong site specified" });
+    }
   } else {
-    return res
-      .status(400)
-      .json({ success: false, err: "wrong site specified" });
+      if (site === "markham") {
+        await collectMar.find({}, response).sort({ dateReceived: -1 });
+      } else if (site === "surrey") {
+        await collectSurr.find({}, response).sort({ dateReceived: -1 });
+      } else if (site === "glenview") {
+        await collectGlen.find({}, response).sort({ dateReceived: -1 });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, err: "wrong site specified" });
+      }
   }
+
 };
 
 const getStatus = async (req, res) => {
@@ -98,6 +116,10 @@ const getStatus = async (req, res) => {
 
   let site = req.params.site;
   let stat = { status: capitalize(req.params.status) };
+  const siteQuery = req.query.query;
+  const pages = req.query
+  const x = parseInt(pages.x)
+  const y = parseInt(pages.y)
 
   const response = (err, result) => {
     if (err) {
@@ -107,16 +129,30 @@ const getStatus = async (req, res) => {
     return res.status(200).json({ success: true, data: result });
   };
 
-  if (site === "markham") {
-    await collectMar.find(stat, response);
+  if (siteQuery === "length") {
+    if (site === "markham") {
+      await collectMar.find(stat, response).countDocuments();
+    } else if (site === "surrey") {
+      await collectSurr.find(stat, response).countDocuments();
+    } else if (site === "glenview") {
+      await collectGlen.find(stat, response).countDocuments();
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, err: "wrong site specified" });
+    }
+  } else {
+      if (site === "markham") {
+    await collectMar.find(stat, response).sort({ dateReceived: -1 });
   } else if (site === "surrey") {
-    await collectSurr.find(stat, response);
+    await collectSurr.find(stat, response).sort({ dateReceived: -1 });
   } else if (site === "glenview") {
-    await collectGlen.find(stat, response);
+    await collectGlen.find(stat, response).sort({ dateReceived: -1 });
   } else {
     return res
       .status(400)
       .json({ success: false, err: "wrong site specified" });
+  }
   }
 };
 
@@ -205,9 +241,51 @@ const getPage = async (req, res) => {
   }
 };
 
+const pagination = (total, pagePerView, site, status) => {
+  const paginationList = parseInt(total/pagePerView);
+  const lastPage = total % pagePerView;
+  const pageNoArray = [...Array(paginationList+1).keys()].slice(1,)
+  let pageArray = pageNoArray.map(page => {
+    let x = (page - 1)*pagePerView
+    let y = page*pagePerView
+    return [x, y]
+  })
+
+  lastPage ? pageArray.push([paginationList*pagePerView, paginationList*pagePerView + lastPage]) : 0;
+
+  const pageUrls = pageArray.map(page =>  `${process.env.BASE_URL}/tickets/${site}/${status}?x=${page[0]}&y=${page[1]}` )  
+
+  return {pageArray, pageNoArray, pageUrls};
+}
+
+const getPagination = async (req, res) => {
+
+  const urlQuery = req.query
+  const site = urlQuery.site
+  const status = urlQuery.status
+  const fetchTotalOrders = await fetch(`${process.env.BASE_URL}/tickets/${site}/${status}?query=length`)
+  const totalOrders = await fetchTotalOrders.json()
+  let length = 0;
+  (totalOrders.success) ? length = totalOrders.data : length = 0;
+
+
+  const pages = pagination(length, 100, site, status);
+  const result = {
+    collection_length: length,
+    page_numbers: pages.pageNoArray,
+    page_pagination: pages.pageArray,
+    page_urls: pages.pageUrls,
+  }
+
+  res.status(200).json({success: true, data: result})
+
+}
+
 const getSearch = async (req, res) => {
   const site = req.params.site;
   const searchQuery = req.params.query;
+  const count = parseInt(req.query.count); 
+
 
   const response = (err, result) => {
     if (err) {
@@ -225,7 +303,7 @@ const getSearch = async (req, res) => {
         response
       )
       .sort({ score: { $meta: "textScore" } })
-      .sort({ dateReceived: -1 });
+      .sort({ dateReceived: -1 }).limit(count);
   } else if (site === "surrey") {
     await collectSurr
       .find(
@@ -234,7 +312,7 @@ const getSearch = async (req, res) => {
         response
       )
       .sort({ score: { $meta: "textScore" } })
-      .sort({ dateReceived: -1 });
+      .sort({ dateReceived: -1 }).limit(count);
   } else if (site === "glenview") {
     await collectGlen
       .find(
@@ -243,7 +321,7 @@ const getSearch = async (req, res) => {
         response
       )
       .sort({ score: { $meta: "textScore" } })
-      .sort({ dateReceived: -1 });
+      .sort({ dateReceived: -1 }).limit(count);
   } else {
     return res
       .status(400)
@@ -429,10 +507,11 @@ const ediMeta = async (req, res) => {
   ediMetaData.findOne({customer: site}, response)
 }
 
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
 
 const postEdiDetails = async (req, res) => {
   let post_data = req.body;
+  console.log(post_data)
   const id = req.params.id;
   let site = req.params.site;
 
@@ -583,4 +662,5 @@ module.exports = {
   createSX,
   ediDBMetaData,
   getbunzlCrossRef,
+  getPagination,
 };

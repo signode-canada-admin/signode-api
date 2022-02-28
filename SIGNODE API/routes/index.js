@@ -19,6 +19,7 @@ router.get("/edi/createSX", ctrl.createSX)
 router.get("/edimetadata", ctrl.ediDBMetaData)
 router.get("/edimetadata/:site", ctrl.ediMeta)
 router.get("/search/:site/:query", ctrl.getSearch);
+router.get("/pagination", ctrl.getPagination);
 router.get("/testapi", ctrl.postTest);
 router.get("/*", ctrl.getRedirect);
 

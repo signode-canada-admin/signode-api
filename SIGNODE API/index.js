@@ -21,6 +21,7 @@ db.on("error", console.error.bind(console, "Mongo connection error"));
 //api page
 const path = require("path");
 app.get("/api", (req, res) => {
+  console.log(__dirname)
   res.sendFile(path.join(__dirname + "/pages/index.html"));
 });
 
