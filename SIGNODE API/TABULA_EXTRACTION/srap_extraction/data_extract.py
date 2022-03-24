@@ -74,6 +74,7 @@ def srap_data(file, area=(119.7225, 13.3875, 733.2525, 495.3375) , pages=1):
         "num_line_items": len(line_items),
         "line_items" :line_items,
         "ship_via": ship_via,
+        "ship_to": "00"
     }
 
 

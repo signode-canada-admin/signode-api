@@ -45,9 +45,8 @@ def move_files(src, dst):
 # this program relies on the item number having a '#' come before it. If '#' isn't present at all before the item number, fails to detect item number.
 
 def read_loop(file):
-    file_copy = open(file, 'rb')
-    readpdf = PyPDF2.PdfFileReader(file_copy)
-    totalpages = readpdf.numPages #number of pages in pdf
+    json_data = read_pdf(file, pages="all", area=(2.6044374465942384, 4.09268741607666, 840.4891702651977, 594.183800315857), stream=True, output_format="json")
+    totalpages = len(json_data) #number of pages in pdf
     quantity_leftover = -1#if a item's quantity is on this page and its item number is on the next page, save that quantity number to this
     #if there isn't any leftover on first page, default value is -1
     line_item_list = [] #holds quantity and item number pair info
@@ -274,6 +273,21 @@ def arcelor_mittal_data_lattice(file, pages, quantity_leftover, area=(100.865625
 #problems below
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/Exceptions/PO-4500746034.pdf"))
 
-print(read_loop(file = r"Y:\Pick Ticket Project\EDI\CUSTOMERS\Arcelor_Mittal\PO-4500637531.pdf"))
+#print(read_loop(rf"Y:\Pick Ticket Project\EDI\CUSTOMERS\Arcelor_Mittal\PO-4500659938.pdf"))
+#print(read_loop(rf"{sys.argv[1]}"))
+
+try:
+    print(read_loop(rf"{sys.argv[1]}")) 
+except Exception as e:
+    ret = {
+        "success": "false",
+        "ship_to": "ENTER SHIP_TO NUMBER",
+        "po_no": "",
+        "num_line_items": 0,
+        "line_items": [],
+        "error": "Unexpected error occured, Might be an Image Based Pdf"
+    }
+    print(ret)
+
 
 sys.stdout.flush()

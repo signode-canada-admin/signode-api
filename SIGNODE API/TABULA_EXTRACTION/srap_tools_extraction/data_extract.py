@@ -71,11 +71,11 @@ def srap_data_tools(file, area=(0.3825, 0.765, 693.4725, 611.235) , pages=1):
 # Return the Invoice number, total number of items, quanity 
 # and product numbers of each item, & the company name/address
     return {
-        "po_no": invoice_no,
+        "po_no": "No Charge",
         "num_line_items": len(line_items),
         "line_items" :line_items,
-        "ship_to": ship_ad,
-        "ship_via": "ENTER SHIP VIA HERE",
+        "ship_to": "Enter Ship_To Number",
+        "ship_via": "TR",
     }
 
 # Error checking

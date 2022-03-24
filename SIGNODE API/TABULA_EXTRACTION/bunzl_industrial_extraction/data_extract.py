@@ -270,6 +270,7 @@ def return_GF_dict(data=None, ship_via=None, po_no=None):
         "errors": errors,
         "ship_via": ship_via,
         "po_no": po_no,
+        "ship_to": "ENTER SHIP_TO NUMBER",
         "consumables": consumables,
         "parts": parts,
         "other": other

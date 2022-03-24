@@ -18,6 +18,7 @@ const SITES = {
   "bi": "Bunzl_industrial",
   "str": "Srap_Tool_Repair",
   "am": "Arcelor_Mittal",
+  "service": "Service",
 }
 //
 
@@ -377,6 +378,8 @@ const getEDIpageExtract = async (req, res) => {
     pythonFile = process.env.AM_TABULA
   } else if (site==='str') {
     pythonFile = process.env.SRAP_TOOL_REPAIR_TABULA
+  } else if (site ==='service') {
+    pythonFile = process.env.SERVICE_TABULA
   }
 
   function bi_extract (pythonFile, fileDir) {
@@ -457,6 +460,12 @@ const getEdipage = async (req, res) => {
       } else {
         fileDir = `${process.env.AM_URL}\\${id}.pdf`
       }
+    } else if (site==='service'){
+      if (archived === 'true'){
+        fileDir = `${process.env.SERVICE_ARCHIVED_URL}\\${id}.pdf`
+      } else {
+        fileDir = `${process.env.SERVICE_URL}\\${id}.pdf`
+      }
     }
 
     fs.stat(fileDir, function (err, stat) {
@@ -510,6 +519,8 @@ const ediMeta = async (req, res) => {
 
 
 
+
+
 const postEdiDetails = async (req, res) => {
   let post_data = req.body;
   console.log(post_data)
@@ -528,17 +539,26 @@ const postEdiDetails = async (req, res) => {
   let excel_data = {"line_items": []}
   excel_data.ship_via = post_data.ship_via
   excel_data.po_no = post_data.po_no
-  excel_data.customer_name = poMeta.customer_name
-  excel_data.ship_to = poMeta.ship_to
+  if (post_data.cus_no){
+    excel_data.customer_name = post_data.cus_no
+  }else{
+    excel_data.customer_name = poMeta.customer_name
+  }
+  excel_data.ship_to = post_data.ship_to
   excel_data.warehouse = poMeta.warehouse
   excel_data.order_type = poMeta.order_type
   excel_data._id = id
-
+  
 
   if (Array.isArray(post_data.prod_no)) {
       post_data.prod_no.forEach((prod, i) => {
           excel_data.num_line_items = post_data.prod_no.length
-          excel_data.line_items.push({"quantity": post_data.prod_qty[i], "product": prod})
+          if (post_data.desc){
+            excel_data.line_items.push({"quantity": post_data.prod_qty[i], "product": prod, "description": post_data.desc[i]})
+          } else {
+            excel_data.line_items.push({"quantity": post_data.prod_qty[i], "product": prod})
+          }
+          // excel_data.line_items.push({"quantity": post_data.prod_qty[i], "product": prod})
       })
   } else {
       excel_data.num_line_items = 1
@@ -565,11 +585,13 @@ const createSX = async (req, res) => {
   const pythonProcess = spawn('python', [process.env.COMMON_ONE_SHEET, JSON.stringify(db)]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
-      const pdfData = JSON.parse(data)
-      // console.log(pdfData)
-      // empty db
-      db = {"data": [], "pdfs": []}
-      res.status(200).json({"success": true})
+      const temp_pdfData = JSON.stringify(data)
+      const pdfData = JSON.parse(temp_pdfData)
+        db = {"data": [], "pdfs": []}
+        res.status(200).json({"success": true})
+
+
+
       // console.log("DONE")
       // if (pdfData.success !== 'false') {
       //   res.redirect("http://localhost:3000/edi")
