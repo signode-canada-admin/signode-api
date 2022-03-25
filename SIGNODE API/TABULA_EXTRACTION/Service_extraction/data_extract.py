@@ -137,6 +137,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     for j in range(0, len(Technicians_Report)):
         Technicians_Report[j] = (Technicians_Report[j]).replace("—", "-")
         Technicians_Report[j] = (Technicians_Report[j]).replace("–", "-")
+        Technicians_Report[j] = (Technicians_Report[j]).replace("'", " ")
 
         for k in range(0,len(Technicians_Report[j])):
             counter = counter + 1
