@@ -585,8 +585,7 @@ const createSX = async (req, res) => {
   const pythonProcess = spawn('python', [process.env.COMMON_ONE_SHEET, JSON.stringify(db)]);
   pythonProcess.stdout.on('data', (data) => {
       data = data.toString().replace(/'/g, '"')
-      const temp_pdfData = JSON.stringify(data)
-      const pdfData = JSON.parse(temp_pdfData)
+      const pdfData = JSON.parse(data)
         db = {"data": [], "pdfs": []}
         res.status(200).json({"success": true})
 
