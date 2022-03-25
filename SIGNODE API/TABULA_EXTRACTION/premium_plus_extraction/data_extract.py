@@ -106,7 +106,7 @@ def return_PP_dict(data=None, via_data=None):
         "po_no": po_no,
         "num_line_items": len(line_items),
         "line_items": line_items,
-        "ship_to": "00"
+        "ship_to": "00",
     }
 
 
