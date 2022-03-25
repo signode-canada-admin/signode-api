@@ -127,7 +127,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
         Column_0[i] = (Column_0[i].split(' '))[-1]
         
     for i in range(0,len(Column_1)):
-        Column_1[i] = (Column_1[i]).replace("'", " ")
+        Column_1[i] = (Column_1[i]).replace("'", "")
         for m in range(0, len(Description_Array)):
             if Column_1[i] == Description_Array[m]:
                 Column_0[i] = Code_Array[m]
@@ -137,7 +137,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     for j in range(0, len(Technicians_Report)):
         Technicians_Report[j] = (Technicians_Report[j]).replace("—", "-")
         Technicians_Report[j] = (Technicians_Report[j]).replace("–", "-")
-        Technicians_Report[j] = (Technicians_Report[j]).replace("'", " ")
+        Technicians_Report[j] = (Technicians_Report[j]).replace("'", "")
 
         for k in range(0,len(Technicians_Report[j])):
             counter = counter + 1
