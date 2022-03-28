@@ -130,6 +130,7 @@ def print_multiple_POS(json_data):
         "customer_po": "A3",
         "ship_via": "A4",
         "terms": "B4",
+        "reference":"A5",
         "requested_ship_date": "B5"
         
     }
@@ -143,7 +144,9 @@ def print_multiple_POS(json_data):
 
         sheet.title = data["po_no"]
         try:
-            sheet[cell_name["customer_name"]] = data["customer_no"]
+            sheet[cell_name["terms"]] = data["terms"]
+            sheet[cell_name["reference"]] = data["reference"]
+            sheet[cell_name["customer_name"]] = data["customer_name"]
         except:
             sheet[cell_name["customer_name"]] = data["customer_name"]
         sheet[cell_name["ship_to"]] = data["ship_to"]
@@ -151,6 +154,8 @@ def print_multiple_POS(json_data):
         sheet[cell_name["order_type"]] = data["order_type"]
         sheet[cell_name["customer_po"]] = data["po_no"]
         sheet[cell_name["ship_via"]] = data["ship_via"]
+
+        id = data["_id"]
 #         sheet[cell_name["terms"]] = "PPD"
     #     sheet[cell_name["requested_ship_date"]] = "NET 30 DAYS"
 
@@ -171,7 +176,7 @@ def print_multiple_POS(json_data):
             sheet = workbook.create_sheet()
         #save the excel sheet
     workbook.save(filename=excel_file)
-    return json_data["pdfs"]
+    return json_data["pdfs"], id
 
 
 # def move_pdf(site):
@@ -185,14 +190,19 @@ def premium_plus_process(data):
     all_paths = paths("Premium_plus")
     # enter excel directory
     enter_directory(all_paths["sx_excel"])
-    files = print_multiple_POS(data)
+    files, x = print_multiple_POS(data)
     # move pdf file to archive
     for filename in files:
-        id , site = filename.split("*SEPARATOR*")
-        all_paths = paths(site)
-        pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
-        move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
-    
+        try:
+            y , site = filename.split("*SEPARATOR*")
+            all_paths = paths(site)
+            pdf = os.path.join(all_paths['pdfs'], f'{x}.pdf')
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{x}.pdf'))
+        except:
+            id , site = filename.split("*SEPARATOR*")
+            all_paths = paths(site)
+            pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
     # finally enter code_path
     enter_directory(all_paths["code"])
     # return "DONE"

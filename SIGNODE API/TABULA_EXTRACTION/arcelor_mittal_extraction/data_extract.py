@@ -80,6 +80,8 @@ def read_loop(file):
         "num_line_items": len(line_item_list),
         "line_items": line_item_list,
         "errors": errors,
+        "ship_to": "00",
+        "ship_via": "Enter Ship Via Here",
     }
 
 def arcelor_mittal_data_stream(file, pages, quantity_leftover, area=(1.903125, 0, 791.319375, 608.23875)):

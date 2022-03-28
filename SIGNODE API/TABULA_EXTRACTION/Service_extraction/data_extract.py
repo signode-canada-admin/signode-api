@@ -41,12 +41,34 @@ def split(a, n):
     k, m = divmod(len(a), n)
     return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
+def name(file, area=(263.0127975845337, 47.98960521697998, 295.74989261627195, 301.70209171295164), pages=1):
+    json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
+    rows_data = json_data[0]["data"]
+    Service_name = ([row[1]["text"] for row in rows_data])
+    try:
+        Service_name = Service_name[0] + " " + Service_name[1]
+    except:
+        Service_name = Service_name[0]
+        
+    Name_List = ["Markham Warehouse","Vancouver Warehouse", "Nam Tran", "Tim Hegarty", "Rahul Sharma", "Bruce Gilchrist", "Joe Bosnjak", "Kirk Gilchrist", "Mario Kenty", "Valeriu Serban", "Daniel Jacob", "Mateus Lara", "Spencer Shlakoff"]
+    Warehouse_List = ["A001", "A002", "A004", "V003", "V007", "V014", "V017", "V018", "V006", "V023", "V025", "V032", "V033"]
+    
+    Warehouse = " "
+    x = 0
+    
+    for i in range(0,len(Name_List)):
+        if Name_List[i] == Service_name:
+            Warehouse = Warehouse_List[i]
+            
+    return Warehouse
+
 
 def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840.4891702651977, 594.183800315857)):
     Service_Order_No = service_order(file)
     Customer_No = customer_no(file)
     Ship_To = Customer_No[1]
     Customer_No = Customer_No[0]
+    Warehouse = name(file)
     
     try:
         PO_No = po_no(file)
@@ -122,6 +144,9 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
 
     Column_0 = Column_0[:p]
     Column_2 = Column_2[:p]
+
+    not_found = True
+    index_work = 0
     
     for i in range(0,len(Column_0)):
         Column_0[i] = (Column_0[i].split(' '))[-1]
@@ -132,12 +157,17 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
             if Column_1[i] == Description_Array[m]:
                 Column_0[i] = Code_Array[m]
                 Column_1[i] = SX_Description[m]
+                if not_found:
+                    index_work = i
+                    not_found = False
     
     counter = 0
     for j in range(0, len(Technicians_Report)):
         Technicians_Report[j] = (Technicians_Report[j]).replace("—", "-")
         Technicians_Report[j] = (Technicians_Report[j]).replace("–", "-")
-        Technicians_Report[j] = (Technicians_Report[j]).replace("'", "")
+        Technicians_Report[j] = (Technicians_Report[j]).replace("'", "*")
+        Technicians_Report[j] = (Technicians_Report[j]).replace("’", "*")
+
 
         for k in range(0,len(Technicians_Report[j])):
             counter = counter + 1
@@ -166,16 +196,19 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
                 "quantity" : Column_2[i]
             }
         )
-    line_items = temp_line_items + line_items
+    temp_line_items_2 = line_items[index_work:]
+    line_items = line_items[:index_work]
+    line_items = temp_line_items + temp_line_items_2 + line_items 
 
     return {
         "po_no": PO_No,
         "customer_no": Customer_No,
-        "service_order": Service_Order_No,
+        "reference": Service_Order_No,
         "num_line_items": len(line_items),
         "line_items" :line_items,
-        "ship_via" :"TR",
-        "ship_to" :Ship_To
+        "ship_via" :"SC",
+        "ship_to" :Ship_To,
+        "warehouse": Warehouse
     }
 try:
     print(service(rf"{sys.argv[1]}")) 

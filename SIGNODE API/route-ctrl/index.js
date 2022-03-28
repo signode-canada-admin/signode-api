@@ -363,7 +363,6 @@ const getEDIpageExtract = async (req, res) => {
   let id = req.params.id;
 
   const spawn = require("child_process").spawn;
-  console.log(site)
   
   // const file = `Y:\\Pick Ticket Project\\EDI\\Premium_plus\\PDFS_PREMIUM_PLUS\\${id}.pdf`
   let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
@@ -541,12 +540,16 @@ const postEdiDetails = async (req, res) => {
   excel_data.po_no = post_data.po_no
   if (post_data.cus_no){
     excel_data.customer_name = post_data.cus_no
+    excel_data.warehouse = post_data.warehouse
+    excel_data.reference = post_data.reference
+    excel_data.terms = poMeta.terms
   }else{
     excel_data.customer_name = poMeta.customer_name
+    excel_data.warehouse = poMeta.warehouse
   }
   excel_data.ship_to = post_data.ship_to
-  excel_data.warehouse = poMeta.warehouse
   excel_data.order_type = poMeta.order_type
+
   excel_data._id = id
   
 
@@ -568,9 +571,13 @@ const postEdiDetails = async (req, res) => {
   // add to db
   site = SITES[site]
   db.data.push(excel_data)
-  db.pdfs.push(`${id}*SEPARATOR*${site}`)
+  if (post_data.cus_no){
+    db.pdfs.push(`${excel_data.reference}*SEPARATOR*${site}`)
+  }else{
+    db.pdfs.push(`${id}*SEPARATOR*${site}`)
+  }
 
-  console.log(site)
+
   // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
   if(req.params.site !== "bi"){
     res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
