@@ -6,10 +6,29 @@ import numpy as np
 Description_Array = ["Standard Travel",
                     "Standard Travel - Overtime",
                     "Standard Service",
-                    "Standard Service - Overtime", 
+                    "Standard Service - Overtime",
+                    "Standard Service - Double Time",
+                    "Standard Travel - Double Time",
+                    "SMA Labor",
+                    "SMA Labor - Overtime",
+                    "SMA Labor - Double Time",
+                    "SMA Travel",
+                    "SMA Travel - Overtime",
+                    "SMA Travel - Double Time" 
                     ]
-Code_Array = ["T", "TL", "SL", "SLT",]
-SX_Description = ["Travel - Regular Time", "Travel - Time 1/2", "On-Site Service - Regular", "On-Site Service - Time and 1/2",]
+Code_Array = ["T", "TL", "SL", "SLT","SLD","TD","NC-SL","NC-SLT","NC-SLD","NC-T","NC-TL","NC-TD"]
+SX_Description = ["Travel - Regular Time", 
+                "Travel - Time 1/2", 
+                "On-Site Service - Regular", 
+                "On-Site Service - Time and 1/2",
+                "Service Double Time",
+                "Travel Double Time",
+                "Service Regular No Charge",
+                "Service Time and 1/2 no Charge",
+                "Service Double Time No Charge",
+                "Travel Regular No Charge",
+                "Travel Time and 1/2 No Charge",
+                "Travel Double Time No Charge"]
 
 def service_order(file, area=(29.39293689727783, 343.4136804580688, 92.64356060028076, 543.5833013534545), pages=1):
     json_data = read_pdf(file, pages=f"{pages}", area=area, stream=True, output_format="json")
