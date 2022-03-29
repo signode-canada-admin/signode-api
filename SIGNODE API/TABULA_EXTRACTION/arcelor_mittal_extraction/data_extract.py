@@ -1,6 +1,35 @@
 import json
 from tabula import read_pdf, read_pdf_with_template
 import PyPDF2
+import sys
+import os
+import glob
+
+def list_of_files(path, file_ending='*.pdf'):
+    '''
+    path = directory of files
+    file_ending = type of files (default = ".pdf")
+    '''
+    return glob.glob(os.path.join(path, file_ending))
+
+def enter_directory(path):
+    '''
+    path = directory to enter(must be r'str')
+    '''
+    try: 
+        os.chdir(path)
+    except OSError:       
+        print("Entering the directory %s failed" % path)
+
+def move_files(src, dst):
+    '''
+    src = path to file (.pdf)
+    dst = new path to file (.pdf)
+    '''
+    try:
+        os.replace(src, dst)
+    except:
+        os.rename(src, dst)
 #you need to install the PyPDF2 library
 
 #to do list
@@ -16,9 +45,8 @@ import PyPDF2
 # this program relies on the item number having a '#' come before it. If '#' isn't present at all before the item number, fails to detect item number.
 
 def read_loop(file):
-    file_copy = open(file, 'rb')
-    readpdf = PyPDF2.PdfFileReader(file_copy)
-    totalpages = readpdf.numPages #number of pages in pdf
+    json_data = read_pdf(file, pages="all", area=(2.6044374465942384, 4.09268741607666, 840.4891702651977, 594.183800315857), stream=True, output_format="json")
+    totalpages = len(json_data) #number of pages in pdf
     quantity_leftover = -1#if a item's quantity is on this page and its item number is on the next page, save that quantity number to this
     #if there isn't any leftover on first page, default value is -1
     line_item_list = [] #holds quantity and item number pair info
@@ -34,9 +62,9 @@ def read_loop(file):
             [line_items,quantity_leftover] = arcelor_mittal_data_lattice(file = file, pages=i, quantity_leftover = quantity_leftover)
         line_item_list.extend(line_items)
     
-    print("***************----------------------------************************")
-    print("***************READ LOOP FILE IS DONE LOOPING************************")
-    print("***************----------------------------************************")
+    #print("***************----------------------------************************")
+    #print("***************READ LOOP FILE IS DONE LOOPING************************")
+    #print("***************----------------------------************************")
 
     #these 2 lines grab the po from top left of first page
     json_data = read_pdf(file, pages=1, area=(52.906875, 5.328749999999999, 103.910625, 162.14625), stream=True, output_format="json")
@@ -52,6 +80,8 @@ def read_loop(file):
         "num_line_items": len(line_item_list),
         "line_items": line_item_list,
         "errors": errors,
+        "ship_to": "00",
+        "ship_via": "Enter Ship Via Here",
     }
 
 def arcelor_mittal_data_stream(file, pages, quantity_leftover, area=(1.903125, 0, 791.319375, 608.23875)):
@@ -77,7 +107,7 @@ def arcelor_mittal_data_stream(file, pages, quantity_leftover, area=(1.903125, 0
     quantity_found = False #tells us to search for a # if quantity_found is True, doesnt search for # if false
     item_number_list = []
     
-    print("***************----------------------------************************")
+    #print("***************----------------------------************************")
     #info.split(" ") is already a 1D array
     for index, info in enumerate(text_list):
         #print((info.split(" ")[0]))
@@ -132,7 +162,7 @@ def arcelor_mittal_data_stream(file, pages, quantity_leftover, area=(1.903125, 0
             "product": item_number_list[x],
         })
     
-    print(items)
+    #print(items)
     
     return items,quantity_leftover
 
@@ -201,9 +231,12 @@ def arcelor_mittal_data_lattice(file, pages, quantity_leftover, area=(100.865625
             "product": item_number_list[x],
         })
     
-    print(items)
+    #print(items)
 
     return items,quantity_leftover
+
+
+
 
 #below are working pdfs
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/PO-4500787334.pdf"))
@@ -241,3 +274,22 @@ def arcelor_mittal_data_lattice(file, pages, quantity_leftover, area=(100.865625
 
 #problems below
 #print(read_loop(file = r"C:/Users/0235898/test_Arcelor_Mittal_POs/Exceptions/PO-4500746034.pdf"))
+
+#print(read_loop(rf"Y:\Pick Ticket Project\EDI\CUSTOMERS\Arcelor_Mittal\PO-4500659938.pdf"))
+#print(read_loop(rf"{sys.argv[1]}"))
+
+try:
+    print(read_loop(rf"{sys.argv[1]}")) 
+except Exception as e:
+    ret = {
+        "success": "false",
+        "ship_to": "ENTER SHIP_TO NUMBER",
+        "po_no": "",
+        "num_line_items": 0,
+        "line_items": [],
+        "error": "Unexpected error occured, Might be an Image Based Pdf"
+    }
+    print(ret)
+
+
+sys.stdout.flush()

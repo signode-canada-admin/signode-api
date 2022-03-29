@@ -1,3 +1,4 @@
+from re import S
 from tabula import read_pdf, read_pdf_with_template
 from openpyxl import Workbook
 import os
@@ -129,7 +130,9 @@ def print_multiple_POS(json_data):
         "customer_po": "A3",
         "ship_via": "A4",
         "terms": "B4",
+        "reference":"A5",
         "requested_ship_date": "B5"
+        
     }
     
     for data in DATA:
@@ -140,27 +143,40 @@ def print_multiple_POS(json_data):
         MAX_COL = 18
 
         sheet.title = data["po_no"]
-        sheet[cell_name["customer_name"]] = data["customer_name"]
+        try:
+            sheet[cell_name["terms"]] = data["terms"]
+            sheet[cell_name["reference"]] = data["reference"]
+            sheet[cell_name["customer_name"]] = data["customer_name"]
+        except:
+            sheet[cell_name["customer_name"]] = data["customer_name"]
         sheet[cell_name["ship_to"]] = data["ship_to"]
         sheet[cell_name["warehouse"]] = data["warehouse"]
         sheet[cell_name["order_type"]] = data["order_type"]
         sheet[cell_name["customer_po"]] = data["po_no"]
         sheet[cell_name["ship_via"]] = data["ship_via"]
+
+        id = data["_id"]
 #         sheet[cell_name["terms"]] = "PPD"
     #     sheet[cell_name["requested_ship_date"]] = "NET 30 DAYS"
 
         ##print_to_line_items
         quantity_query = column_name['quantity'] - 1
         product_query = column_name['product'] -1 
+        description_query = column_name['description'] - 1
         for item, row in enumerate(sheet.iter_rows(min_row=MIN_ROW, max_row=MAX_ROW, min_col=MIN_COL, max_col=MAX_COL, values_only=False)):
             row[product_query].value = LINE_ITEMS[item]['product']
-            row[quantity_query].value = LINE_ITEMS[item]['quantity']  
+            row[quantity_query].value = LINE_ITEMS[item]['quantity']
+            try:
+                row[description_query].value = (LINE_ITEMS[item]['description'])
+            except:
+                pass
+
         
         if len(workbook.sheetnames) != len(DATA):
             sheet = workbook.create_sheet()
         #save the excel sheet
     workbook.save(filename=excel_file)
-    return json_data["pdfs"]
+    return json_data["pdfs"], id
 
 
 # def move_pdf(site):
@@ -174,14 +190,19 @@ def premium_plus_process(data):
     all_paths = paths("Premium_plus")
     # enter excel directory
     enter_directory(all_paths["sx_excel"])
-    files = print_multiple_POS(data)
+    files, x = print_multiple_POS(data)
     # move pdf file to archive
     for filename in files:
-        id , site = filename.split("*SEPARATOR*")
-        all_paths = paths(site)
-        pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
-        move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
-    
+        try:
+            y , site = filename.split("*SEPARATOR*")
+            all_paths = paths(site)
+            pdf = os.path.join(all_paths['pdfs'], f'{x}.pdf')
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{x}.pdf'))
+        except:
+            id , site = filename.split("*SEPARATOR*")
+            all_paths = paths(site)
+            pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
     # finally enter code_path
     enter_directory(all_paths["code"])
     # return "DONE"
