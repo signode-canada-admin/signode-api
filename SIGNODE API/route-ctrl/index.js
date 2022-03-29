@@ -361,7 +361,6 @@ const getEDIpageExtract = async (req, res) => {
   let id = req.params.id;
 
   const spawn = require("child_process").spawn;
-  console.log(site)
   
   // const file = `Y:\\Pick Ticket Project\\EDI\\Premium_plus\\PDFS_PREMIUM_PLUS\\${id}.pdf`
   let fileDir = `${process.env.BASE_URL}/edi/${site}/${id}`
@@ -549,13 +548,13 @@ const postEdiDetails = async (req, res) => {
   db.data.push(excel_data)
   db.pdfs.push(`${id}*SEPARATOR*${site}`)
 
-  console.log(site)
-  // db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
+  // console.log(site)
+  db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
   if(req.params.site !== "bi"){
     res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
   }
   
-  // res.redirect(`http://localhost:3000/edi/DONE?id=${site} ${id}`)
+  // res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
 }
 
 const ediDBMetaData = (req, res) => {
