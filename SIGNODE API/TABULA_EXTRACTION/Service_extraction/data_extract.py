@@ -92,7 +92,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     try:
         PO_No = po_no(file)
     except:
-        PO_No = "Please Fill in as the Field is Blank"
+        PO_No = "NA"
     
     json_data = read_pdf(file, pages="all", area=area, stream=True, output_format="json")
    
