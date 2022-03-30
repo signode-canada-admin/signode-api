@@ -154,13 +154,9 @@ def print_multiple_POS(json_data):
         sheet[cell_name["order_type"]] = data["order_type"]
         sheet[cell_name["customer_po"]] = data["po_no"]
         sheet[cell_name["ship_via"]] = data["ship_via"]
-        
-        x = True
 
-
-        if x:
-            id[y] = data["_id"]
-            y = y + 1
+        id[y] = data["_id"]
+        y = y + 1
             
 #         sheet[cell_name["terms"]] = "PPD"
     #     sheet[cell_name["requested_ship_date"]] = "NET 30 DAYS"
