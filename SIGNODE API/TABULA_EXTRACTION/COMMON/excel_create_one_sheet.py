@@ -195,12 +195,13 @@ def premium_plus_process(data):
     files, x = print_multiple_POS(data)
     # move pdf file to archive
     
-    try:
+    
+    if (files[0]).split("*SEPARATOR*")[1] == 'Service':
         for i in range(0,len(files)):
             all_paths = paths('Service')
             pdf = os.path.join(all_paths['pdfs'], f'{x[i]}.pdf')
             move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{x[i]}.pdf'))
-    except:
+    else:
         for filename in files:
             id , site = filename.split("*SEPARATOR*")
             all_paths = paths(site)
