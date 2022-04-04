@@ -196,7 +196,6 @@ def print_multiple_POS(json_data):
         if len(workbook.sheetnames) != len(DATA):
             sheet = workbook.create_sheet()
         #save the excel sheet
-        
     workbook.save(filename=excel_file)
     return json_data["pdfs"], id
 
@@ -216,6 +215,7 @@ def premium_plus_process(data):
     # move pdf file to archive
     site = (files[0]).split("*SEPARATOR*")
     test = 'intial'
+    subtitles = ['-Consumables', '-Parts', '-Other']
 
     
     if (files[0]).split("*SEPARATOR*")[1] == 'Service':
@@ -226,7 +226,10 @@ def premium_plus_process(data):
     if site[1] == 'Bunzl_industrial':
         for filename in files:
             id , site = filename.split("*SEPARATOR*")
-            id = (id.split('-'))[0]
+            for a in subtitles:
+                if a in id:
+                    id = (id.split(a))[0]
+            print(id)
             all_paths = paths(site)
             pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
             if test != id:
@@ -237,11 +240,9 @@ def premium_plus_process(data):
     else:
         for filename in files:
             id , site = filename.split("*SEPARATOR*")
-            id = (id.split('-'))[0]
             all_paths = paths(site)
             pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
-            test = id
-            #move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
     # finally enter code_path
     enter_directory(all_paths["code"])
     # return "DONE"
