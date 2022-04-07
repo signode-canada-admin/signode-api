@@ -579,7 +579,6 @@ const postEdiDetails = async (req, res) => {
 
 
 
-  db.urls.push(`${process.env.EDI_CUSTOMERS}\\${SITES[site]}\\${id}.pdf`)
   if(req.params.site !== "bi"){
     res.redirect(`${process.env.BASE_WEB_URL}/edi/DONE?id=${site} ${id}`)
   }

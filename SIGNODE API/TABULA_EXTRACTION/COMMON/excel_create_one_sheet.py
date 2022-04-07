@@ -1,4 +1,3 @@
-from re import S
 from tabula import read_pdf, read_pdf_with_template
 from openpyxl import Workbook
 import os
@@ -134,7 +133,13 @@ def print_multiple_POS(json_data):
         "requested_ship_date": "B5"
         
     }
+    y = 0
     
+    no_pdfs = len(json_data["pdfs"])
+    excel_file = excel_file.replace("_Bunzl_industrial", "Placeholder", 1)
+    excel_file = excel_file.replace("_Bunzl_industrial", "", no_pdfs)
+    excel_file = excel_file.replace("Placeholder", "_Bunzl_industrial")
+    id = (no_pdfs) * [0] 
     for data in DATA:
         LINE_ITEMS = data["line_items"]
         MIN_ROW = 9
@@ -143,6 +148,7 @@ def print_multiple_POS(json_data):
         MAX_COL = 18
 
         sheet.title = data["po_no"]
+        
         try:
             sheet[cell_name["terms"]] = data["terms"]
             sheet[cell_name["reference"]] = data["reference"]
@@ -155,7 +161,9 @@ def print_multiple_POS(json_data):
         sheet[cell_name["customer_po"]] = data["po_no"]
         sheet[cell_name["ship_via"]] = data["ship_via"]
 
-        id = data["_id"]
+        id[y] = data["_id"]
+        y = y + 1
+            
 #         sheet[cell_name["terms"]] = "PPD"
     #     sheet[cell_name["requested_ship_date"]] = "NET 30 DAYS"
 
@@ -163,15 +171,28 @@ def print_multiple_POS(json_data):
         quantity_query = column_name['quantity'] - 1
         product_query = column_name['product'] -1 
         description_query = column_name['description'] - 1
-        for item, row in enumerate(sheet.iter_rows(min_row=MIN_ROW, max_row=MAX_ROW, min_col=MIN_COL, max_col=MAX_COL, values_only=False)):
-            row[product_query].value = LINE_ITEMS[item]['product']
-            row[quantity_query].value = LINE_ITEMS[item]['quantity']
-            try:
-                row[description_query].value = (LINE_ITEMS[item]['description'])
-            except:
-                pass
+        if int(data["customer_name"]) == 6207:
+            for item, row in enumerate(sheet.iter_rows(min_row=MIN_ROW, max_row=MAX_ROW, min_col=MIN_COL, max_col=MAX_COL, values_only=False)):
+                try:
+                    row[product_query].value = LINE_ITEMS[item]['product']
+                    row[quantity_query].value = LINE_ITEMS[item]['quantity']
+                except:
+                    pass
+                try:
+                    row[description_query].value = (LINE_ITEMS[item]['description'])
+                except:
+                    pass
+                
+        else:
+            for item, row in enumerate(sheet.iter_rows(min_row=MIN_ROW, max_row=MAX_ROW, min_col=MIN_COL, max_col=MAX_COL, values_only=False)):
+                row[product_query].value = LINE_ITEMS[item]['product']
+                row[quantity_query].value = LINE_ITEMS[item]['quantity']
+                try:
+                    row[description_query].value = (LINE_ITEMS[item]['description'])
+                except:
+                    pass
 
-        
+
         if len(workbook.sheetnames) != len(DATA):
             sheet = workbook.create_sheet()
         #save the excel sheet
@@ -192,13 +213,31 @@ def premium_plus_process(data):
     enter_directory(all_paths["sx_excel"])
     files, x = print_multiple_POS(data)
     # move pdf file to archive
-    for filename in files:
-        try:
-            y , site = filename.split("*SEPARATOR*")
+    site = (files[0]).split("*SEPARATOR*")
+    test = 'intial'
+    subtitles = ['-Consumables', '-Parts', '-Other']
+
+    
+    if (files[0]).split("*SEPARATOR*")[1] == 'Service':
+        for i in range(0,len(files)):
+            all_paths = paths('Service')
+            pdf = os.path.join(all_paths['pdfs'], f'{x[i]}.pdf')
+            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{x[i]}.pdf'))
+    if site[1] == 'Bunzl_industrial':
+        for filename in files:
+            id , site = filename.split("*SEPARATOR*")
+            for a in subtitles:
+                if a in id:
+                    id = (id.split(a))[0]
             all_paths = paths(site)
-            pdf = os.path.join(all_paths['pdfs'], f'{x}.pdf')
-            move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{x}.pdf'))
-        except:
+            pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
+            if test != id:
+                move_files(pdf, os.path.join(all_paths["pdfs_archive"], f'{id}.pdf'))
+            else:
+                pass
+            test = id
+    else:
+        for filename in files:
             id , site = filename.split("*SEPARATOR*")
             all_paths = paths(site)
             pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
@@ -207,7 +246,6 @@ def premium_plus_process(data):
     enter_directory(all_paths["code"])
     # return "DONE"
     return "DONE"
-
 
 try:
     data = premium_plus_process(json.loads(sys.argv[1]))
