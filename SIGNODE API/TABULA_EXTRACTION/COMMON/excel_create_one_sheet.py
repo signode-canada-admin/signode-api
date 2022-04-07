@@ -229,7 +229,6 @@ def premium_plus_process(data):
             for a in subtitles:
                 if a in id:
                     id = (id.split(a))[0]
-            print(id)
             all_paths = paths(site)
             pdf = os.path.join(all_paths['pdfs'], f'{id}.pdf')
             if test != id:
