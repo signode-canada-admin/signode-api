@@ -1,4 +1,3 @@
-
 from tabula import read_pdf
 import sys
 import numpy as np
@@ -69,7 +68,7 @@ def name(file, area=(263.0127975845337, 47.98960521697998, 295.74989261627195, 3
     except:
         Service_name = Service_name[0]
         
-    Name_List = ["Markham Warehouse","Vancouver Warehouse", "Nam Tran", "Tim Hegarty", "Rahul Sharma", "Bruce Gilchrist", "Joe Bosnjak", "Kirk Gilchrist", "Mario Kenty", "Valeriu Serban", "Daniel Jacob", "Mateus Lara", "Spencer Shlakoff"]
+    Name_List = ["Markham Warehouse","Vancouver Warehouse", "Nam Tran", "Timothy Hegarty", "Rahul Sharma", "Bruce Gilchrist", "Joseph Bosnjak", "Kirk Gilchrist", "Mario Kenty", "Valeriu Serban", "Daniel Jacob", "Mateus Lara", "Spencer Shlakoff"]
     Warehouse_List = ["A001", "A002", "A004", "V003", "V007", "V014", "V017", "V018", "V006", "V023", "V025", "V032", "V033"]
     
     Warehouse = " "
@@ -94,9 +93,17 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     except:
         PO_No = "NA"
     
-    json_data = read_pdf(file, pages="all", area=area, stream=True, output_format="json")
+    no_pages_json = read_pdf(file, pages="all", area=area, stream=True, output_format="json")
    
-    no_of_pages = len(json_data)
+    no_of_pages = len(no_pages_json)
+    
+    for i in range(1,no_of_pages + 1):
+        if i == 1:
+            json_data = read_pdf(file, pages= 1, area=(312.9045560836792, 4.836812400817871, 841.9774202346802, 594.9279253005981), stream=True, output_format="json")
+        else:
+            temp_json_data = read_pdf(file, pages = i, area=area, stream=True, output_format="json")
+            json_data = json_data + temp_json_data
+                  
     
     x = 0
     n = 1
@@ -112,9 +119,12 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     a = json_data[0]["data"]
     b = [row[0]["text"] for row in a]
     
+   
+    
     c = json_data[1]["data"]
     d = [row[0]["text"] for row in c]
     
+    g = 0
     for i in range(0,len(b)):
         if "Serial Number Item #" in b[i]:
             g = i
@@ -123,7 +133,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
         if "5B3" in d[i]:
             h = i
             break
-
+   
     while x != (no_of_pages):
         
         if x == 0:
@@ -133,8 +143,12 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
         
         a = json_data[x]["data"]
         
-        if ([row[1]["text"] for row in a][y:])[0] == '':
-            n = 2
+        try:
+            if ([row[1]["text"] for row in a][y:])[0] == '':
+                n = 2
+                
+        except:
+            pass
         
         b = [row[0]["text"] for row in a][y:]
         Column_0 = (temp_Column_0 + b)
@@ -212,7 +226,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
             {
                 "product": Column_0[i],
                 "description" : Column_1[i],
-                "quantity" : Column_2[i]
+                "quantity" : (Column_2[i])
             }
         )
     temp_line_items_2 = line_items[index_work:]
