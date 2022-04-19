@@ -8,6 +8,13 @@ const routes = require("./routes");
 const app = express();
 const apiport = 4000;
 
+const cron = require('node-cron')
+
+cron.schedule('30 16 * * *', function(){
+  const spawn = require("child_process").spawn
+  const pythonProcess = spawn('python',["C:\\pickticket_test\\OneDrive - Signode Industrial Group\\Desktop\\shipping report\\test3.py"]);
+})
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(
