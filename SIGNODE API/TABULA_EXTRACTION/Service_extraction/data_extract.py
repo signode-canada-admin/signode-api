@@ -145,10 +145,6 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     a = json_data[0]["data"]
     b = [row[0]["text"] for row in a]
     
-    #Get the second column of data
-    c = json_data[1]["data"]
-    d = [row[0]["text"] for row in c]
-    
     g = 0
 
     #This loop find the row where the line items start for the first page
@@ -156,12 +152,18 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
         if "Serial Number Item #" in b[i]:
             g = i
     
-    #This loop finds where the line items start past the first page
-    for i in range(0,len(d)):
-        if "5B3" in d[i]:
-            h = i
-            break
-   
+    
+    if no_of_pages != 1:
+        #Get the second column of data
+        c = json_data[1]["data"]
+        d = [row[0]["text"] for row in c]
+        
+        #This loop finds where the line items start past the first page
+        for i in range(0,len(d)):
+            if "5B3" in d[i]:
+                h = i
+                break
+    
    #This loop filters each column on each page and adds them to one array
     while x != (no_of_pages):
         
@@ -199,7 +201,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
     
     # Loop to find where the line items end 
     for i in range(0,len(Column_1)):
-        if "Cycle Count" in Column_1[i] or "" == Column_0[i] :
+        if "Cycle Count" in Column_1[i] or "" == Column_0[i] or "Cycle Count" in Column_0[i] :
             Column_1 = Column_1[:i]
             p = i
             break
@@ -295,6 +297,7 @@ def service(file, pages = "all", area=(2.6044374465942384, 4.09268741607666, 840
         "warehouse": Warehouse
     }
 
+
 try:
     print(service(rf"{sys.argv[1]}")) 
 except Exception as e:
@@ -311,5 +314,7 @@ except Exception as e:
         "error": "Please Inform CI Team"
     }
     print(ret)
-      
+
 sys.stdout.flush()
+
+#confirm new code present
